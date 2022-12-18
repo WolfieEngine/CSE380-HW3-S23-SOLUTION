@@ -1,0 +1,79 @@
+{
+    "name": "Spike",
+    "spriteSheetImage": "spike.png",
+    "spriteWidth": 16,
+    "spriteHeight": 16,
+    "columns": 16,
+    "rows": 1,
+    "durationType": "time",
+    "animations": [
+        { 
+            "name": "IDLE",
+            "frames": [ {"index": 0, "duration": 540} ]
+        },
+        {
+            "name": "WALK",
+            "frames": [ {"index": 0, "duration": 16}, {"index": 1, "duration": 16}, {"index": 2, "duration": 16}, {"index": 3, "duration": 16} ]
+        },
+        {
+            "name": "JUMP",
+            "frames":[ {"index": 1, "duration": 32}]
+        },
+        {
+            "name": "FALL",
+            "frames":[ {"index": 1, "duration": 32}]
+        },
+
+        { 
+            "name": "RED_IDLE",
+            "frames": [ {"index": 4, "duration": 540} ]
+        },
+        {
+            "name": "RED_WALK",
+            "frames": [ {"index": 4, "duration": 16}, {"index": 5, "duration": 16}, {"index": 6, "duration": 16}, {"index": 7, "duration": 16} ]
+        },
+        {
+            "name": "RED_JUMP",
+            "frames":[ {"index": 4, "duration": 32}]
+        },
+        {
+            "name": "RED_FALL",
+            "frames":[ {"index": 4, "duration": 32}]
+        },
+
+        { 
+            "name": "GREEN_IDLE",
+            "frames": [ {"index": 8, "duration": 540} ]
+        },
+        {
+            "name": "GREEN_WALK",
+            "frames": [ {"index": 8, "duration": 16}, {"index": 9, "duration": 16}, {"index": 10, "duration": 16}, {"index": 11, "duration": 16} ]
+        },
+        {
+            "name": "GREEN_JUMP",
+            "frames":[ {"index": 8, "duration": 32}]
+        },
+        {
+            "name": "GREEN_FALL",
+            "frames":[ {"index": 8, "duration": 32}]
+        },
+
+        { 
+            "name": "BLUE_IDLE",
+            "frames": [ {"index": 12, "duration": 540} ]
+        },
+        {
+            "name": "BLUE_WALK",
+            "frames": [ {"index": 12, "duration": 16}, {"index": 13, "duration": 16}, {"index": 14, "duration": 16}, {"index": 15, "duration": 16} ]
+        },
+        {
+            "name": "BLUE_JUMP",
+            "frames":[ {"index": 12, "duration": 32}]
+        },
+        {
+            "name": "BLUE_FALL",
+            "frames":[ {"index": 12, "duration": 32}]
+        }
+
+    ]
+}
