@@ -92,6 +92,7 @@ export default class StateMachine implements Updateable {
         let options = this.currentState.onExit();
 
         // Make sure the correct state is at the top of the stack
+        // This if-statement with the "previous" thing shouldn't be here IMO - PeteyLumpkins
         if(state === "previous"){
             // Pop the current state off the stack
             this.stack.pop();

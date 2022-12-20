@@ -1,32 +1,35 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
-import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import Button from "../../Wolfie2D/Nodes/UIElements/Button";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
 import Scene from "../../Wolfie2D/Scene/Scene";
 import Color from "../../Wolfie2D/Utils/Color";
-import Level1 from "./Level1";
+import Level1 from "./HW4Level1";
+
+import { HW4Sounds } from "../HW4Resources";
+
+// Layers for the main menu scene
+export enum MenuLayers {
+    MAIN = "MAIN"
+}
 
 export default class MainMenu extends Scene {
 
-    animatedSprite: AnimatedSprite;
-
-    loadScene(): void {
+    public loadScene(): void {
         // Load the menu song
-        this.load.audio("menu", "hw4_assets/music/menu.mp3");
+        this.load.audio(HW4Sounds.MENU_MUSIC_KEY, HW4Sounds.MENU_MUSIC_PATH);
     }
 
-    startScene(): void {
-        this.addUILayer("Main");
+    public startScene(): void {
+        this.addUILayer(MenuLayers.MAIN);
 
         // Center the viewport
         let size = this.viewport.getHalfSize();
         this.viewport.setFocus(size);
-
         this.viewport.setZoomLevel(1);
 
         // Create a play button
-        let playBtn = <Button>this.add.uiElement(UIElementType.BUTTON, "Main", {position: new Vec2(size.x, size.y), text: "Play Game"});
+        let playBtn = <Button>this.add.uiElement(UIElementType.BUTTON, MenuLayers.MAIN, {position: new Vec2(size.x, size.y), text: "Play Game"});
         playBtn.backgroundColor = Color.TRANSPARENT;
         playBtn.borderColor = Color.WHITE;
         playBtn.borderRadius = 0;
@@ -39,12 +42,12 @@ export default class MainMenu extends Scene {
         }
 
         // Scene has started, so start playing music
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "menu", loop: true, holdReference: true});
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY, loop: true, holdReference: true});
     }
 
-    unloadScene(): void {
+    public unloadScene(): void {
         // The scene is being destroyed, so we can stop playing the song
-        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: "menu"});
+        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY});
     }
 }
 

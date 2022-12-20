@@ -1,11 +1,12 @@
-import Input from "../../../Wolfie2D/Input/Input";
 import { PlayerStates } from "../PlayerController";
+import { HW4PlayerSpritesheet } from "../../HW4Resources";
 import OnGround from "./OnGround";
 
 export default class Walk extends OnGround {
 
 	onEnter(options: Record<string, any>): void {
 		this.parent.speed = this.parent.MIN_SPEED;
+        this.owner.animation.playIfNotAlready(HW4PlayerSpritesheet.WALK);
 	}
 
 	update(deltaT: number): void {

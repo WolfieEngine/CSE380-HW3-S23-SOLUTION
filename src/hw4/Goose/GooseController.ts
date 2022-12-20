@@ -1,9 +1,14 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import StateMachineAI from "../../Wolfie2D/AI/StateMachineAI";
-import Sinking from "./Sinking";
-import Rising from "./Rising";
+import Sinking from "./GooseStates/Falling";
+import Rising from "./GooseStates/Rising";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import Dead from "./Dead";
+import Dead from "./GooseStates/Dead";
+import { HW4Events } from "../HW4Events";
+
+export enum GooseAnimations {
+
+}
 
 export enum GooseStates {
 	SINKING = "sinking",
@@ -12,7 +17,7 @@ export enum GooseStates {
 }
 
 export default class GooseController extends StateMachineAI {
-	protected _owner: AnimatedSprite;
+    protected owner: AnimatedSprite;
 	protected _direction: Vec2;
 	protected _velocity: Vec2;
 	protected _speed: number;
@@ -20,29 +25,29 @@ export default class GooseController extends StateMachineAI {
 	protected _gravity: number;
 
 	public initializeAI(owner: AnimatedSprite, options: Record<string, any>){
-		this._owner = owner;
-        this._owner.animation.play("idle_not_aggro");
+		this.owner = owner;
+        this.owner.animation.play("idle_not_aggro");
         // this._owner.animation.play("IDLE");
 
+        // Set movement properties for the goose
+        this._direction = new Vec2(-1, 0);
+        this._velocity = Vec2.ZERO;
+        this._speed = 100;
+        this._ySpeed = 400;
+        this._gravity = 1000;
+
+        // Add states for the goose and set the initial state to "sinking"
 		this.addState(GooseStates.SINKING, new Sinking(this, owner));
 		this.addState(GooseStates.RISING, new Rising(this, owner));
         this.addState(GooseStates.DEAD, new Dead(this, owner));
+        this.initialize(GooseStates.SINKING);
 
-		this._direction = new Vec2(-1, 0);
-        this._velocity = Vec2.ZERO;
-        this._speed = 100;
-        this._ySpeed = 700;
-        this._gravity = 1000;
-
-		this.initialize(GooseStates.SINKING);
-        this.receiver.subscribe("goose_hit_start");
+        // Subscribe to the weapon hit events
+        this.receiver.subscribe(HW4Events.WEAPON_HIT_GOOSE);
+        this.receiver.subscribe(HW4Events.GOOSE_HIT_PLAYER);
 	}
 
-	changeState(stateName: string): void {
-        super.changeState(stateName);
-	}
-
-	update(deltaT: number): void {
+	public update(deltaT: number): void {
 		super.update(deltaT);
 	}
 

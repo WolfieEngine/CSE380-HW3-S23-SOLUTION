@@ -1,5 +1,7 @@
 import Input from "../../../Wolfie2D/Input/Input";
 import MathUtils from "../../../Wolfie2D/Utils/MathUtils";
+import { HW4Controls } from "../../HW4Controls";
+import { PlayerTweens } from "../PlayerController";
 import PlayerState from "./PlayerState";
 
 export default class OnGround extends PlayerState {
@@ -19,14 +21,14 @@ export default class OnGround extends PlayerState {
 
 		// If we jump, move to the Jump state, give a burst of upwards velocity, and play our flip tween animation if 
 		// we're moving left or right
-		if(Input.isJustPressed("jump")){
-			this.finished("jump");
+		if(Input.isJustPressed(HW4Controls.JUMP)){
+			this.finished(HW4Controls.JUMP);
 			this.parent.velocity.y = -500;
 			if(this.parent.velocity.x !== 0){
-				this.owner.tweens.play("flip");
+				this.owner.tweens.play(PlayerTweens.FLIP);
 			}
 		} else if(!this.owner.onGround){
-			this.finished("fall");
+			this.finished(HW4Controls.JUMP);
 		}
 	}
 

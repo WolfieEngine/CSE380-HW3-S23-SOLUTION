@@ -1,8 +1,6 @@
-import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import BalloonState from "./GooseState";
+import GooseState from "./GooseState";
 
-export default class Rising extends BalloonState {
+export default class Rising extends GooseState {
 	
 	onEnter(): void {
         this.gravity = -this.parent.gravity;

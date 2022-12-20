@@ -1,16 +1,10 @@
 import State from "../../../Wolfie2D/DataTypes/State/State";
-import StateMachine from "../../../Wolfie2D/DataTypes/State/StateMachine";
-import Vec2 from "../../../Wolfie2D/DataTypes/Vec2";
 import GameEvent from "../../../Wolfie2D/Events/GameEvent";
-import Input from "../../../Wolfie2D/Input/Input";
-import GameNode from "../../../Wolfie2D/Nodes/GameNode";
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import Timer from "../../../Wolfie2D/Timing/Timer";
-import { HW5_Events } from "../../hw5_enums";
 import PlayerController from "../PlayerController";
 
 /**
- * An abstract state for the player's state-machine ai.
+ * An abstract state for the PlayerController 
  */
 export default abstract class PlayerState extends State {
 
@@ -32,7 +26,6 @@ export default abstract class PlayerState extends State {
      */
 	public handleInput(event: GameEvent): void {
         switch(event.type) {
-
             // Default - throw an error
             default: {
                 throw new Error(`Unhandled event in PlayerState of type ${event.type}`);

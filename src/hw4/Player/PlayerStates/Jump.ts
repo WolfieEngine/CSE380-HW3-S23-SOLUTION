@@ -3,10 +3,13 @@ import { GameEventType } from "../../../Wolfie2D/Events/GameEventType";
 import { PlayerStates } from "../PlayerController";
 import InAir from "./InAir";
 
+import { HW4Sounds } from "../../HW4Resources";
+
 export default class Jump extends InAir {
 
 	onEnter(options: Record<string, any>): void {
-		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: "jump", loop: false, holdReference: false});
+        // I don't like this but it should get the job done - PeteyLumpkins
+		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: HW4Sounds.JUMP_AUDIO_KEY, loop: false, holdReference: false});
 	}
 
 	update(deltaT: number): void {

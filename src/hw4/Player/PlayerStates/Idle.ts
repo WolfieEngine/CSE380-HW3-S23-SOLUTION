@@ -1,10 +1,12 @@
 import Input from "../../../Wolfie2D/Input/Input";
 import { PlayerStates } from "../PlayerController";
+import { HW4PlayerSpritesheet } from "../../HW4Resources";
 import OnGround from "./OnGround";
 
 export default class Idle extends OnGround {
 
 	onEnter(options: Record<string, any>): void {
+        this.owner.animation.play(HW4PlayerSpritesheet.IDLE);
 		this.parent.speed = this.parent.MIN_SPEED;
 	}
 
@@ -14,11 +16,9 @@ export default class Idle extends OnGround {
 		let dir = this.parent.inputDir;
 
 		if(!dir.isZero() && dir.y === 0){
-			if(Input.isPressed("run")){
-				this.finished(PlayerStates.RUN);
-			} else {
-				this.finished(PlayerStates.WALK);
-			}
+			
+			this.finished(PlayerStates.WALK);
+			
 		}
 		
 		this.parent.velocity.x = 0;

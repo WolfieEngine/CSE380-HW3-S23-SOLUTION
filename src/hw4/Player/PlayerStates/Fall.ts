@@ -1,4 +1,3 @@
-
 import InAir from "./InAir";
 
 export default class Fall extends InAir {
