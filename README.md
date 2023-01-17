@@ -16,6 +16,10 @@ In this assignment, you will make a simple platformer game using the Typescript 
 * How to create simple AI using finite state machines
 * Resource management 
 
+In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our actors game nodes and registering our nodes with the physics system.
+
+> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. 
+
 ## Moving Nodes in the Physics System
 If you want to move a game node using Wolfie2D's physics system, you should call the `Physical.move()` method on the game node.
 
@@ -33,10 +37,6 @@ A word of caution; Calling the `move()` method and updating the position field o
 Moving a game node by updating it's position field is the equivalent of "teleporting" that game node, whereas calling the the `move()` method is how you actually "move" the node. If your game is using physics, you should be calling the move method.
 
 ## Adding Physics to GameNodes
-In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our actors game nodes.
-
-> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. 
-
 In Wolfie2D, if you want to add a physics component to your game node, you can call the `Physical.addPhysics()` method on the game node. The method has several optional parameters you can pass to it. 
 
 ```typescript
@@ -48,6 +48,14 @@ In Wolfie2D, if you want to add a physics component to your game node, you can c
  */
 addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean, isStatic?: boolean): void;
 ```
+
+For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
+
+- The player's sprite
+- All of the geese sprites
+- All of the particles in the player's weapon particle system
+- The sprite for the player's weapon
+- The ground and destructible layers of the tilemap
 
 ## Creating Physics Groups and Triggers
 Wolfie2Ds physics system supports physics groups and triggers. Currently, the way you have to pass in physics groups is through the scene options that get passed to the scene constructor. 
