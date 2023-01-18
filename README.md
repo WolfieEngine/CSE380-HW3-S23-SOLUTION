@@ -18,7 +18,16 @@ In this assignment, you will make a simple platformer game using the Typescript 
 
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our actors game nodes and registering our nodes with the physics system.
 
-> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. 
+> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
+
+## StateMachine AI
+In the first homework assignment, we assigned some simple AI classes to our game nodes. In this assignment, we're going to take the AI a step further, with two 
+
+```mermaid
+stateDiagram-
+```
+
+
 
 ## Moving Nodes in the Physics System
 If you want to move a game node using Wolfie2D's physics system, you should call the `Physical.move()` method on the game node.
@@ -37,6 +46,14 @@ A word of caution; Calling the `move()` method and updating the position field o
 Moving a game node by updating it's position field is the equivalent of "teleporting" that game node, whereas calling the the `move()` method is how you actually "move" the node. If your game is using physics, you should be calling the move method.
 
 ## Adding Physics to GameNodes
+For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
+
+- The player's sprite
+- All of the geese sprites
+- All of the particles in the player's weapon particle system
+- The sprite for the player's weapon
+- The ground and destructible layers of the tilemap
+
 In Wolfie2D, if you want to add a physics component to your game node, you can call the `Physical.addPhysics()` method on the game node. The method has several optional parameters you can pass to it. 
 
 ```typescript
@@ -49,37 +66,7 @@ In Wolfie2D, if you want to add a physics component to your game node, you can c
 addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean, isStatic?: boolean): void;
 ```
 
-For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
-
-- The player's sprite
-- All of the geese sprites
-- All of the particles in the player's weapon particle system
-- The sprite for the player's weapon
-- The ground and destructible layers of the tilemap
-
 ## Creating Physics Groups and Triggers
-Wolfie2Ds physics system supports physics groups and triggers. Currently, the way you have to pass in physics groups is through the scene options that get passed to the scene constructor. 
-> There are probably other ways to get the options into the constructor, but this seems like the "best" way for now.
-
-```typescript
-// Here's a constructor for a custom scene class extending the base scene class
-public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
-    // Pass the physics groups into the super class constructor via the scene options parameter
-    super(viewport, sceneManager, renderingManager, {...options, physics: { /* Physics groups/data here */ }});
-}
-```
-The physics object that can be passed into the scene options has the following format:
-```typescript
-type PhysicOptions = {
-
-  // The names of the collision groups to add to the physics manager for this scene
-  groupNames: string[];
-  
-  // The collision map for the different collision groups
-  collisions: number[][];
-  
-}
-```
 For this homework assignment, you'll have to configure the physics groups and collision map for the scene. There are five collision groups that need to be accounted for:
 1. Ground: the group for thhe indestructible layer of the tilemap
 2. Player: the group for the player
@@ -97,8 +84,40 @@ The collision map for the five groups should resemble the table shown below:
 | Destructible | No     | Yes    | Yes    | No           | Yes   |
 | Goose        | Yes    | Yes    | No     | Yes          | No    |
 
+Currently, the way you have to configure physics groups and triggers is by passing in physics groups is through the scene options that get passed to the scene constructor. 
+
+```typescript
+// Here's a constructor for a custom scene class extending the base scene class
+public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
+
+    // Pass the physics groups into the super class constructor via the scene options parameter
+    super(viewport, sceneManager, renderingManager, {...options, physics: { /* Physics groups/data here */ }});
+    
+}
+```
+The `physics` object that can be passed into the scene options has the following format:
+```typescript
+type PhysicOptions = {
+
+  // The names of the collision groups to add to the physics manager for this scene
+  groupNames: string[];
+  
+  // The collision map for the different collision groups
+  collisions: number[][];
+  
+}
+```
+Each group in `groupNames` will get a row/column in the collision map. 
+
 ## Assigning Physics Groups and Triggers
-After the physics groups have been initialized for a scene and you've given your actors game nodes their physics components, you can start assigning physics groups and triggers. Physics groups can be assigned to game nodes using the `Physical.setGroup()` method. 
+For this assignment you'll need to assign different types of game nodes to different collision groups.
+
+* The player should be assigned to the Player physics group
+* All goose actors in the geese object pool should be assigned the Goose physics group
+* All particles in the particle pool for the player's particle weapon should be assigned to the Weapon physics group
+
+Physics groups can be assigned to game nodes using the `Physical.setGroup()` method. 
+
 ```typescript
 interface Physical {
     /**
@@ -108,12 +127,6 @@ interface Physical {
     setGroup(group: string): void;
 }
 ```
-
-For this assignment you'll need to assign different types of game nodes to different collision groups.
-
-* The player should be assigned to the Player physics group
-* All goose actors in the geese object pool should be assigned the Goose physics group
-* All particles in the particle pool for the player's particle weapon should be assigned to the Weapon physics group
 
 In addition, you'll most likely want to set events to be fired when collisions occur between the objects in the different physics groups. You can assign collision triggers to nodes using the `Physical.setTrigger()` method. 
 
@@ -128,6 +141,7 @@ interface Physical {
     setTrigger(group: string, onEnter: string, onExit: string): void;
 }
 ```
+
 When the physics system detects a collision between a game node and one of it's trigger groups, an event will be fired to the EventQueue with the name of the event passed to the `onEnter` field of the `setTrigger()` method and the following data:
 
 ```typescript
@@ -137,7 +151,7 @@ type TriggerEventData = {
   node: number
   
   // The id of the other node in the collision
-	other: number
+  other: number
   
 }
 ```
@@ -154,4 +168,6 @@ Wolfie2Ds supports two physics properties for tilemap layers. They are as follow
 In the tilemaps you create, you should assign the collidable property for both the Ground and Destructible layers to be true and give both layers a physics group. 
 
 ## Particle Systems
-Wolfie2D supports a particle system. In this homework assignment, the PlayerWeapon class is an extension of Wolfie2Ds base particle system. 
+In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The `PlayerWeapon` extends the base `ParticeSystem` class, sprinkling in some extra bits of functionality, turning the particle system into a weapon.
+
+
