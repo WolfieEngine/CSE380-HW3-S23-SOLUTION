@@ -5,7 +5,6 @@ import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 
 import Fall from "./PlayerStates/Fall";
 import Idle from "./PlayerStates/Idle";
-import InAir from "./PlayerStates/InAir";
 import Jump from "./PlayerStates/Jump";
 import Walk from "./PlayerStates/Walk";
 
@@ -67,16 +66,6 @@ export default class PlayerController extends StateMachineAI {
         this.addState(PlayerStates.FALL, new Fall(this, this.owner));
         // Start the player in the Idle state
         this.initialize(PlayerStates.IDLE);
-    }
-
-    public changeState(stateName: string): void {
-        // If we jump or fall, push the state so we can go back to our current state later
-        // unless we're going from jump to fall or something
-        if((stateName === PlayerStates.JUMP || stateName === PlayerStates.FALL) && !(this.stack.peek() instanceof InAir)){
-            this.stack.push(this.stateMap.get(stateName));
-        }
-
-        super.changeState(stateName);
     }
 
     /** 
