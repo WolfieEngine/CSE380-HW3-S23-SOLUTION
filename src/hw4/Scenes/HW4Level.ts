@@ -18,7 +18,6 @@ import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
 import Timer from "../../Wolfie2D/Timing/Timer";
 import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
-import GooseController from "../Goose/GooseController";
 import PlayerController, { PlayerTweens } from "../Player/PlayerController";
 import PlayerWeapon from "../Player/PlayerWeapon";
 import MainMenu from "./MainMenu";
@@ -65,50 +64,25 @@ export default abstract class HW4Level extends Scene {
     protected levelTransitionTimer: Timer;
     protected levelTransitionScreen: Rect;
 
-
-    // The object pool for the geese
-    protected geese: Array<AnimatedSprite>;
-    // The number of geese alive
-    protected geeseAlive: number;
-    // A label for the number of geeese alive
-    protected geeseLabel: Label;
-
     // The destrubtable layer of the tilemap
     protected destructable: OrthogonalTilemap;
     // The wall layer of the tilemap
     protected walls: OrthogonalTilemap;
 
     public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
-        /*
-            Init the scene with physics collisions:
-
-                        ground  player  weapon 
-            ground    No       --      -- 
-            player    Yes      No      --  
-            weapon   Yes      No      No  
-
-            Each layer becomes a number. In this case, 4 bits matter for each
-
-            ground:  self - 000, collisions - 011
-            player:  self - 001, collisions - 100
-            balloon: self - 010, collisions - 000
-        */
-    
         super(viewport, sceneManager, renderingManager, {...options, physics: {
             groupNames: [
                 HW4PhysicsGroups.GROUND, 
                 HW4PhysicsGroups.PLAYER, 
                 HW4PhysicsGroups.PLAYER_WEAPON, 
-                HW4PhysicsGroups.DESTRUCTABLE, 
-                HW4PhysicsGroups.GOOSE
+                HW4PhysicsGroups.DESTRUCTABLE
             ],
             collisions:
             [
-                [0, 1, 1, 0, 1],
-                [1, 0, 0, 1, 1],
-                [1, 0, 0, 1, 0],
-                [0, 1, 1, 0, 1],
-                [1, 1, 0, 1, 0]
+                [0, 1, 1, 0],
+                [1, 0, 0, 1],
+                [1, 0, 0, 1],
+                [0, 1, 1, 0],
             ]
         }});
     }
@@ -128,11 +102,6 @@ export default abstract class HW4Level extends Scene {
         // Initialize the player 
         this.initializePlayer(this.getPlayerSpriteKey());
 
-        // Initialize the geese for this scene
-        this.geese = this.initializeGeese(this.getGooseSpriteKey(), this.getGeesePositions());
-        // Set the number of geese alive to the number of visisble geese in the scene
-        this.geeseAlive = this.geese.filter((goose) => goose.visible).length;
-
         // Initialize the next level
         this.nextLevel = this.getNextLevel();
 
@@ -144,16 +113,7 @@ export default abstract class HW4Level extends Scene {
         // Initialize the ends of the levels - must be initialized after the primary layer has been added
         this.initializeLevelEnds();
 
-        // Initialize the timers
-        this.respawnTimer = new Timer(1000, () => {
-            if (this.playerLives === 0) {
-                this.sceneManager.changeToScene(MainMenu);
-            } else {
-                this.respawnPlayer();
-                this.player.enablePhysics();
-                this.player.unfreeze();
-            }
-        });
+
         this.levelTransitionTimer = new Timer(500);
         this.levelEndTimer = new Timer(3000, () => {
             // After the level end timer ends, fade to black and then go to the next scene
@@ -253,18 +213,6 @@ export default abstract class HW4Level extends Scene {
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
-            case HW4Events.PLAYER_KILLED: {
-                this.handlePlayerKilled(event);
-                break;
-            }
-            case HW4Events.GOOSE_HIT_PLAYER: {
-                this.handlePlayerHitGoose(event);
-                break;
-            }
-            case HW4Events.GOOSE_DIED: {
-                this.handleGooseKilled(event);
-                break;
-            }
             // Default: Throw an error! No unhandled events allowed.
             default: {
                 throw new Error(`Unhandled event caught in scene with type ${event.type}`)
@@ -279,46 +227,10 @@ export default abstract class HW4Level extends Scene {
      */
     protected handleEnteredLevelEnd(event: GameEvent): void {
         // If there are no more geese and the timer hasn't run yet, start the end level animation
-        if (this.geeseAlive === 0 && !this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
+        if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
             this.levelEndTimer.start();
             this.levelEndLabel.tweens.play("slideIn");
         }
-    }
-    /**
-     * Handles a player killed event. When the player is killed, try to 
-     * respawn the player.
-     */
-    protected handlePlayerKilled(event: GameEvent) {
-        this.respawnPlayer();
-    }
-    /**
-     * Handles the GameEvent triggered when a goose starts colliding with the player.
-     * @param event the event
-     */
-    protected handlePlayerHitGoose(event: GameEvent): void {
-        // Decrement the player's lives
-        this.playerLives -= 1;
-        // Update the player's lives in the UI
-        this.livesCountLabel.text = "Lives: " + this.playerLives;
-
-        // If the player is out of lives -> play the player's death animation and sound and go to the main menu
-        if (this.playerLives === 0) {
-            Input.disableInput();
-            this.player.disablePhysics();
-            this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.getPlayerDeathKey(), loop: false, holdReference: false });
-            this.player.tweens.play(PlayerTweens.DEATH);
-        }
-    }
-    /**
-     * Handles a GOOSE_DIED event.
-     * @param event a goose-killed event
-     */
-    protected handleGooseKilled(event: GameEvent): void {
-        // Update the geese alive in the scene and the UI
-        this.geeseAlive -= 1;
-        this.geeseLabel.text = "Geese Left: " + this.geeseAlive;
-        // Play the goose hurt/killed sound effect
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: this.getGooseHitKey(), loop: false, holdReference: false})
     }
 
     /* Initialization methods for everything in the scene */
@@ -351,24 +263,11 @@ export default abstract class HW4Level extends Scene {
         this.receiver.subscribe(HW4Events.PLAYER_ENTERED_LEVEL_END);
         this.receiver.subscribe(HW4Events.LEVEL_START);
         this.receiver.subscribe(HW4Events.LEVEL_END);
-        this.receiver.subscribe(HW4Events.PLAYER_KILLED);
-        this.receiver.subscribe(HW4Events.GOOSE_HIT_PLAYER);
-        this.receiver.subscribe(HW4Events.GOOSE_DIED);
     }
     /**
      * Adds in any necessary UI to the game
      */
     protected initializeUI(): void {
-        // In-game labels
-        this.geeseLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(40, 30), text: "Geese Left: " + this.geeseAlive });
-        this.geeseLabel.textColor = Color.BLACK
-        this.geeseLabel.font = "PixelSimple";
-        this.geeseLabel.fontSize = 20;
-
-        this.livesCountLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(40, 50), text: "Lives: " + this.playerLives });
-        this.livesCountLabel.textColor = Color.BLACK;
-        this.livesCountLabel.font = "PixelSimple";
-        this.livesCountLabel.fontSize = 20;
 
         // End of level label (start off screen)
         this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
@@ -465,7 +364,6 @@ export default abstract class HW4Level extends Scene {
         // Give the player physics and setup collision groups and triggers for the player
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
         this.player.setGroup(HW4PhysicsGroups.PLAYER);
-        this.player.setTrigger(HW4PhysicsGroups.GOOSE, HW4Events.GOOSE_HIT_PLAYER, null);
 
         // Give the player a flip animation
         this.player.tweens.add(PlayerTweens.FLIP, {
@@ -519,31 +417,7 @@ export default abstract class HW4Level extends Scene {
         this.viewport.setZoomLevel(4);
         this.viewport.setBounds(0, 0, 512, 512);
     }
-    /**
-     * A method for initializing the geese in a HW4 level.
-     * @returns an array of animated sprites (the geese) in this scene.
-     */
-    protected initializeGeese(key: string, positions: Vec2[]): Array<AnimatedSprite> {
-        // The object pool of geese for the scene
-        let geese = new Array<AnimatedSprite>(positions.length);
 
-        for (let i = 0; i < geese.length; i++) {
-            // Add the goose to the scene
-            let goose = this.add.animatedSprite(key, HW4Layers.PRIMARY);
-            goose.position.copy(positions[i]);
-            goose.scale.set(1/2, 1/2);
-
-            // Give the goose it's physics and setup collision groups and triggers for the goose
-            goose.addPhysics();
-            goose.setGroup(HW4PhysicsGroups.GOOSE);
-            goose.setTrigger(HW4PhysicsGroups.PLAYER_WEAPON, HW4Events.WEAPON_HIT_GOOSE, null);
-
-            // Give the goose it's AI
-            goose.addAI(GooseController, {});
-            geese[i] = goose;
-        }
-        return geese;
-    }
     /**
      * Initializes the level end area
      */
@@ -560,15 +434,7 @@ export default abstract class HW4Level extends Scene {
             this.levelEndArea.color = new Color(0, 0, 0, 0);
         }
     }
-    /**
-     * Returns the player to spawn
-     */
-    protected respawnPlayer(): void {
-        this.playerLives = 3;
-        this.emitter.fireEvent(GameEventType.STOP_SOUND, { key: this.getLevelMusic() });
-        this.sceneManager.changeToScene(MainMenu, {});
-        Input.enableInput();
-    }
+
 
     /* Abstract methods for getting/doing things specific to the level (Level1 or Level2) */
 
