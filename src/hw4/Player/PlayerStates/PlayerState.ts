@@ -1,6 +1,7 @@
 import State from "../../../Wolfie2D/DataTypes/State/State";
 import GameEvent from "../../../Wolfie2D/Events/GameEvent";
 import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
+import MathUtils from "../../../Wolfie2D/Utils/MathUtils";
 import PlayerController from "../PlayerController";
 
 /**
@@ -34,9 +35,12 @@ export default abstract class PlayerState extends State {
 	}
 
 	public update(deltaT: number): void {
-		// Do gravity 
-		this.parent.velocity.y += this.gravity*deltaT;
-	}
+        // This updates the direction the player sprite is facing (left or right)
+        let direction = this.parent.inputDir;
+		if(direction.x !== 0){
+			this.owner.invertX = MathUtils.sign(direction.x) < 0;
+		}
+    }
 
     public abstract onExit(): Record<string, any>;
 }

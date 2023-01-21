@@ -4,7 +4,7 @@
 export enum HW4Sounds {
     // The music for the levels
     LEVEL_MUSIC_KEY = "LEVEL_MUSIC",
-    LEVEL_MUSIC_PATH = "hw4_assets/music/hw5bg.mp3",
+    LEVEL_MUSIC_PATH = "hw4_assets/music/hw5_level_music.wav",
 
     // The music for the menu
     MENU_MUSIC_KEY = "MENU_MUSIC",
