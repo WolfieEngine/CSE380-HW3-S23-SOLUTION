@@ -442,7 +442,7 @@ export default abstract class HW4Level extends Scene {
      * Initializes the particles system used by the player's weapon.
      */
     protected initializeWeaponSystem(): void {
-        this.playerWeaponSystem = new PlayerWeapon(100, Vec2.ZERO, 1000, 3, 0, 100);
+        this.playerWeaponSystem = new PlayerWeapon(50, Vec2.ZERO, 1000, 3, 0, 50);
         this.playerWeaponSystem.initializePool(this, HW4Layers.PRIMARY);
     }
     /**

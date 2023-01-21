@@ -34,7 +34,7 @@ export default class PlayerWeapon extends ParticleSystem {
      */
     public setParticleAnimation(particle: Particle) {
         // Give the particle a random velocity.
-        particle.vel = RandUtils.randVec(-32, 32, 400, 500);
+        particle.vel = RandUtils.randVec(-32, 32, 100, 200);
         // Rotate the particle's velocity vector
         particle.vel.rotateCCW(this._rotation);
         particle.color = Color.RED;
