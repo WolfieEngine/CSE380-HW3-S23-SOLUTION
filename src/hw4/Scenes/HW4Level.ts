@@ -41,7 +41,7 @@ export enum HW4Layers {
  */
 export default abstract class HW4Level extends Scene {
     /** The sprite that is player's weapon / particle cannon thing */
-    protected playerWeaponSprite: Sprite;
+    // protected playerWeaponSprite: Sprite;
     /** The particle system used for the player's weapon */
     protected playerWeaponSystem: PlayerWeapon
     /** The animated sprite that is the player */
@@ -96,7 +96,6 @@ export default abstract class HW4Level extends Scene {
         this.initializeTilemap(tilemapData.key, tilemapData.scale);
 
         // Initialize the sprite and particle system for the players weapon 
-        this.initializeWeaponSprite(this.getWeaponSpriteKey());
         this.initializeWeaponSystem();
 
         // Initialize the player 
@@ -329,15 +328,6 @@ export default abstract class HW4Level extends Scene {
         });
     }
     /**
-     * Initializes the player's weapon sprite
-     * @param key the key for the weapon sprite image
-     */
-    protected initializeWeaponSprite(key: string): void {
-        this.playerWeaponSprite = this.add.sprite(key, HW4Layers.PRIMARY);
-        this.playerWeaponSprite.scale.set(1/2, 1/2);
-        this.playerWeaponSprite.position.copy(this.getPlayerSpawn());
-    }
-    /**
      * Initializes the particles system used by the player's weapon.
      */
     protected initializeWeaponSystem(): void {
@@ -349,9 +339,6 @@ export default abstract class HW4Level extends Scene {
      * @param position the player's spawn position
      */
     protected initializePlayer(key: string): void {
-        if (this.playerWeaponSprite === undefined) {
-            throw new Error("Player weapon sprite must be initialized before initializing the player!");
-        }
         if (this.playerWeaponSystem === undefined) {
             throw new Error("Player weapon system must be initialized before initializing the player!");
         }
@@ -401,7 +388,6 @@ export default abstract class HW4Level extends Scene {
 
         // Give the player it's AI
         this.player.addAI(PlayerController, { 
-            weaponSprite: this.playerWeaponSprite,
             weaponSystem: this.playerWeaponSystem, 
             tilemap: "Destructable" 
         });
