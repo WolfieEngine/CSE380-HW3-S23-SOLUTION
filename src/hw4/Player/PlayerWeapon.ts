@@ -12,13 +12,6 @@ import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
 export default class PlayerWeapon extends ParticleSystem {
 
     /**
-     * The rotation (in radians) to apply to the velocity vector of the particles
-     */
-    protected _rotation: number = 0;
-    public get rotation(): number { return this._rotation; }
-    public set rotation(rotation: number) { this._rotation = rotation; }
-
-    /**
      * @returns true if the particle system is running; false otherwise.
      */
     public isSystemRunning(): boolean { return this.systemRunning; }
@@ -35,8 +28,6 @@ export default class PlayerWeapon extends ParticleSystem {
     public setParticleAnimation(particle: Particle) {
         // Give the particle a random velocity.
         particle.vel = RandUtils.randVec(-32, 32, 100, 200);
-        // Rotate the particle's velocity vector
-        particle.vel.rotateCCW(this._rotation);
         particle.color = Color.RED;
 
         // Give the particle tweens
