@@ -75,10 +75,6 @@ export default class Level1 extends HW4Level {
         return new Vec2(32*2, 32*2);
     }
 
-    protected getGeesePositions(): Vec2[] {
-        return [new Vec2(160*2, 96*2), new Vec2(160*2, 232*2), new Vec2(64*2, 232*2)]
-    }
-
     protected getNextLevel(): new (...args: any[]) => HW4Level {
         return Level2;
     }
@@ -90,12 +86,9 @@ export default class Level1 extends HW4Level {
         return this.getTilemap(HW4Level1Tilemap.MAIN) as OrthogonalTilemap;
     }
 
-    protected getGooseSpriteKey(): string { return HW4GooseSpritesheet.KEY; }
     protected getPlayerSpriteKey(): string { return HW4PlayerSpritesheet.KEY; }
-    protected getWeaponSpriteKey(): string { return HW4Sprites.WEAPON_KEY; }
 
     protected getLevelMusic(): string { return HW4Sounds.LEVEL_MUSIC_KEY; }
-    protected getGooseHitKey(): string { return HW4Sounds.HIT_AUDIO_KEY }
     protected getPlayerDeathKey(): string { return HW4Sounds.DEATH_AUDIO_KEY; }
     protected getTileDestroyedKey(): string { return HW4Sounds.TILE_DESTROYED_KEY; }
 }
