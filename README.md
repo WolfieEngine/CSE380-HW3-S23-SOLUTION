@@ -18,22 +18,20 @@ In this assignment, you will make a simple platformer game using the Typescript 
 * How to create simple AI using finite state machines
 * Resource management 
 
-In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our actors game nodes and registering our nodes with the physics system.
+## Part 1 - Tilemaps and Tilesets 
 
-> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
+### Part 1.1 - Creating a Tileset
 
-## StateMachine AI
-In the first homework assignment, we assigned some simple AI classes to our game nodes. In this assignment, we're going to take the AI a step further, with two 
+### Part 1.2 - Creating a Tilemap (with Tiled)
+For this assignment, you have to make use of Tileds custom layer properties. In Tiled, you have the option to add custom properties and fields to your tilemaps and layers. Wolfie2D supports two physics properties for tilemap layers. They are as follows:
 
-```mermaid
-stateDiagram-
-```
+| Name       | Type    | Description |
+|------------|---------|-------------|
+| Collidable | boolean | True if this tilemap layer is collidable                                 |
+| Group      | string  | The name of the physics group this tilemap layer should be registered to |
 
-
-
-## Moving Nodes in the Physics System
-If you want to move a game node using Wolfie2D's physics system, you should call the `Physical.move()` method on the game node.
-
+## Part 2 - Physics
+In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
 ```typescript
 interface Physical {
     /**
@@ -47,11 +45,12 @@ A word of caution; Calling the `move()` method and updating the position field o
 
 Moving a game node by updating it's position field is the equivalent of "teleporting" that game node, whereas calling the the `move()` method is how you actually "move" the node. If your game is using physics, you should be calling the move method.
 
-## Adding Physics to GameNodes
+> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
+
+## Part 2.1 - Adding Physics to GameNodes
 For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
 
 - The player's sprite
-- All of the geese sprites
 - All of the particles in the player's weapon particle system
 - The sprite for the player's weapon
 - The ground and destructible layers of the tilemap
@@ -68,26 +67,23 @@ In Wolfie2D, if you want to add a physics component to your game node, you can c
 addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean, isStatic?: boolean): void;
 ```
 
-## Creating Physics Groups and Triggers
+## Part 2.2 - Creating Physics Groups and Triggers
 For this homework assignment, you'll have to configure the physics groups and collision map for the scene. There are five collision groups that need to be accounted for:
 1. Ground: the group for thhe indestructible layer of the tilemap
 2. Player: the group for the player
 3. Weapon: the group for the particles in the player's weapon system
 4. Destructible: the group for destructible layer of the tilemap
-5. Goose: the group for the geese
 
 The collision map for the five groups should resemble the table shown below:
 
-|              | Ground | Player | Weapon | Destructible | Goose |
-|--------------|--------|--------|--------|--------------|-------|
-| Ground       | No     | Yes    | Yes    | No           | Yes   |
-| Player       | Yes    | No     | No     | Yes          | Yes   |
-| Weapon       | Yes    | No     | No     | Yes          | No    |
-| Destructible | No     | Yes    | Yes    | No           | Yes   |
-| Goose        | Yes    | Yes    | No     | Yes          | No    |
+|              | Ground | Player | Weapon | Destructible |
+|--------------|--------|--------|--------|--------------|
+| Ground       | No     | Yes    | Yes    | No           | 
+| Player       | Yes    | No     | No     | Yes          |
+| Weapon       | Yes    | No     | No     | Yes          | 
+| Destructible | No     | Yes    | Yes    | No           | 
 
 Currently, the way you have to configure physics groups and triggers is by passing in physics groups is through the scene options that get passed to the scene constructor. 
-
 ```typescript
 // Here's a constructor for a custom scene class extending the base scene class
 public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
@@ -111,11 +107,10 @@ type PhysicOptions = {
 ```
 Each group in `groupNames` will get a row/column in the collision map. 
 
-## Assigning Physics Groups and Triggers
+## Part 2.3 - Assigning Physics Groups and Triggers
 For this assignment you'll need to assign different types of game nodes to different collision groups.
 
 * The player should be assigned to the Player physics group
-* All goose actors in the geese object pool should be assigned the Goose physics group
 * All particles in the particle pool for the player's particle weapon should be assigned to the Weapon physics group
 
 Physics groups can be assigned to game nodes using the `Physical.setGroup()` method. 
@@ -157,17 +152,6 @@ type TriggerEventData = {
   
 }
 ```
-
-## Tilemap Physics Properties
-Wolfie2Ds supports two physics properties for tilemap layers. They are as follows:
-
-| Name       | Type    | Description |
-|------------|---------|-------------|
-| Collidable | boolean | True if this tilemap layer is collidable                                 |
-| Group      | string  | The name of the physics group this tilemap layer should be registered to |
-
-
-In the tilemaps you create, you should assign the collidable property for both the Ground and Destructible layers to be true and give both layers a physics group. 
 
 ## Particle Systems
 In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The `PlayerWeapon` extends the base `ParticeSystem` class, sprinkling in some extra bits of functionality, turning the particle system into a weapon.
