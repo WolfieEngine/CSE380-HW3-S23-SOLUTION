@@ -28,4 +28,7 @@ export enum HW4Events {
 
     // An event triggered when a goose dies. Has data: {}
     GOOSE_DIED = "GOOSE_DIED",
+
+    // The event sent when a particle hits a tile in the destructible tilemap layer
+    PARTICLE_HIT_DESTRUCTIBLE = "PARTICLE_HIT_DESTRUCTIBLE",
 }

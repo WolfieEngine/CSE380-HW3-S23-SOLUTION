@@ -75,6 +75,8 @@ export default abstract class Tilemap extends CanvasNode {
      * Adds this tilemap to the physics system
     */
     addPhysics(): void {
+        this.triggerEnters = new Array(32);
+		this.triggerExits = new Array(32);
         this.hasPhysics = true;
         this.active = true;
         this.group = -1;
