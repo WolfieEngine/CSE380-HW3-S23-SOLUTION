@@ -134,56 +134,7 @@ export default abstract class HW4Level extends Scene {
             this.handleEvent(this.receiver.getNextEvent());
         }
     }
-    /**
-     * Handles checking for and resolving collisions between particles and the destructible
-     * layer of the tilemap.
-     * 
-     * When a particle collides with a tile in the destructible layer of the map, the tile should
-     * be removed from the map.
-     */
-    protected checkParticleCollisions(): void {
-               // Get the destructable tilemap
-               let tilemap = this.destructable;
-        // Iterate over the particles in the player's particle weapon
-        for (let particle of this.playerWeaponSystem.getPool()) {
-            // If the particle is colliding with the tilemap
-            if (particle.collidedWithTilemap) {
 
-                let min = new Vec2(particle.sweptRect.left, particle.sweptRect.top);
-                let max = new Vec2(particle.sweptRect.right, particle.sweptRect.bottom);
-
-                // Convert the min/max x/y to the min and max row/col in the tilemap array
-                let minIndex = tilemap.getColRowAt(min);
-                let maxIndex = tilemap.getColRowAt(max);
-
-                let tileSize = tilemap.getTileSize();
-
-                // Loop over all possible tiles the particle could be colliding with 
-                for(let col = minIndex.x; col <= maxIndex.x; col++){
-                    for(let row = minIndex.y; row <= maxIndex.y; row++){
-
-                        // If the tile is collideable -> check if this particle is colliding with the tile
-                        if(tilemap.isTileCollidable(col, row)){
-
-                            // Get the position of this tile
-                            let tilePos = new Vec2(col * tileSize.x + tileSize.x/2, row * tileSize.y + tileSize.y/2);
-                            // Create a new collider for this tile
-                            let collider = new AABB(tilePos, tileSize.scaled(1/2));
-
-                            // Calculate collision area between the node and the tile
-                            let area = particle.sweptRect.overlapArea(collider);
-                            if(area > 0){
-                                // We had a collision - delete the tile in the tilemap
-                                tilemap.setTileAtRowCol(new Vec2(col, row), 0);
-                                // Play a sound when we destroy the tile
-                                this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.getTileDestroyedKey(), loop: false, holdReference: false });
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
     /**
      * Handle game events. 
      * @param event the game event
