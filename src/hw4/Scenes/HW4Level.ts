@@ -40,19 +40,11 @@ export enum HW4Layers {
  * An abstract HW4 scene. 
  */
 export default abstract class HW4Level extends Scene {
-    /** The sprite that is player's weapon / particle cannon thing */
-    // protected playerWeaponSprite: Sprite;
     /** The particle system used for the player's weapon */
     protected playerWeaponSystem: PlayerWeapon
     /** The animated sprite that is the player */
     protected player: AnimatedSprite;
-    /** The amount of lives the player starts with */
-    protected playerLives: number = 3;
 
-    protected respawnTimer: Timer;
-
-    /** A label for displaying the player's lives in the UI */
-    protected livesCountLabel: Label;
 
     // Stuff to end the level and go to the next level
     protected levelEndArea: Rect;
@@ -477,10 +469,6 @@ export default abstract class HW4Level extends Scene {
      */
     protected abstract getPlayerSpawn(): Vec2;
     /**
-     * @returns the positions to spawn the geese as an array of Vec2s.
-     */
-    protected abstract getGeesePositions(): Vec2[];
-    /**
      * @returns the constructor for the next HW4Level to load after this level
      */
     protected abstract getNextLevel(): new (...args: any[]) => Scene;
@@ -508,19 +496,6 @@ export default abstract class HW4Level extends Scene {
      * @returns the key associated with the player's sprite for this HW4Level
      */
     protected abstract getPlayerSpriteKey(): string;
-    /**
-     * @returns the key associated with the goose sprite for this HW4Level
-     */
-    protected abstract getGooseSpriteKey(): string;
-    /**
-     * @returns the key associated with the player's weapon sprite for this HW4Level
-     */
-    protected abstract getWeaponSpriteKey(): string;
-    /**
-     * @returns the key associated with the sound effect that should be played when a 
-     * goose is hit/dies.
-     */
-    protected abstract getGooseHitKey(): string;
     /**
      * @returns the key associated with the sound effect that should be played when the player dies.
      */
