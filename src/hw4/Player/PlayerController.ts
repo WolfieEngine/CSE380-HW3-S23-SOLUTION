@@ -45,14 +45,13 @@ export default class PlayerController extends StateMachineAI {
 	protected _speed: number;
 
     protected tilemap: OrthogonalTilemap;
-    protected cannon: Sprite;
+    // protected cannon: Sprite;
     protected weapon: PlayerWeapon;
 
     
     public initializeAI(owner: AnimatedSprite, options: Record<string, any>){
         this.owner = owner;
 
-        this.cannon = options.weaponSprite;
         this.weapon = options.weaponSystem;
 
         this.tilemap = this.owner.getScene().getTilemap(options.tilemap) as OrthogonalTilemap;
@@ -84,11 +83,6 @@ export default class PlayerController extends StateMachineAI {
 
     public update(deltaT: number): void {
 		super.update(deltaT);
-
-        // Update the position and location of the cannon sprite to the players position
-        this.cannon.position.copy(this.owner.position);
-        // Update the cannons rotation - should be firing in same direction as the particles
-        this.cannon.rotation = Vec2.UP.angleToCCW(this.faceDir) + Math.PI / 2;
 
         // Update the rotation to apply the particles velocity vector
         this.weapon.rotation = 2*Math.PI - Vec2.UP.angleToCCW(this.faceDir) + Math.PI;
