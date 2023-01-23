@@ -119,6 +119,10 @@ export default abstract class HW4Level extends Scene {
             this.levelTransitionScreen.tweens.play("fadeIn");
         });
 
+        // Add physics to the destructible layer of the tilemap
+        this.destructable.addPhysics();
+        this.destructable.setGroup(HW4PhysicsGroups.DESTRUCTABLE);
+        this.destructable.setTrigger(HW4PhysicsGroups.PLAYER_WEAPON, HW4Events.PARTICLE_HIT_DESTRUCTIBLE, null);
 
         // Initially disable player movement
         Input.disableInput();
@@ -137,8 +141,6 @@ export default abstract class HW4Level extends Scene {
         while (this.receiver.hasNextEvent()) {
             this.handleEvent(this.receiver.getNextEvent());
         }
-        // Check for particle collisions with the destructible layer
-        this.checkParticleCollisions();
     }
     /**
      * Handles checking for and resolving collisions between particles and the destructible
@@ -148,10 +150,8 @@ export default abstract class HW4Level extends Scene {
      * be removed from the map.
      */
     protected checkParticleCollisions(): void {
-
-        // Get the destructable tilemap
-        let tilemap = this.destructable;
-
+               // Get the destructable tilemap
+               let tilemap = this.destructable;
         // Iterate over the particles in the player's particle weapon
         for (let particle of this.playerWeaponSystem.getPool()) {
             // If the particle is colliding with the tilemap
@@ -212,6 +212,10 @@ export default abstract class HW4Level extends Scene {
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
+            case HW4Events.PARTICLE_HIT_DESTRUCTIBLE: {
+                this.handleParticleHit(event.data.get("node"));
+                break;
+            }
             // Default: Throw an error! No unhandled events allowed.
             default: {
                 throw new Error(`Unhandled event caught in scene with type ${event.type}`)
@@ -220,6 +224,49 @@ export default abstract class HW4Level extends Scene {
     }
 
     /* Handlers for the different events the scene is subscribed to */
+
+    protected handleParticleHit(particleId: number): void {
+        let particles = this.playerWeaponSystem.getPool();
+
+        let particle = particles.find(particle => particle.id === particleId);
+        if (particle !== undefined) {
+            // Get the destructable tilemap
+            let tilemap = this.destructable;
+
+            let min = new Vec2(particle.sweptRect.left, particle.sweptRect.top);
+            let max = new Vec2(particle.sweptRect.right, particle.sweptRect.bottom);
+
+            // Convert the min/max x/y to the min and max row/col in the tilemap array
+            let minIndex = tilemap.getColRowAt(min);
+            let maxIndex = tilemap.getColRowAt(max);
+
+            let tileSize = tilemap.getTileSize();
+
+            // Loop over all possible tiles the particle could be colliding with 
+            for(let col = minIndex.x; col <= maxIndex.x; col++){
+                for(let row = minIndex.y; row <= maxIndex.y; row++){
+
+                    // If the tile is collideable -> check if this particle is colliding with the tile
+                    if(tilemap.isTileCollidable(col, row)){
+
+                        // Get the position of this tile
+                        let tilePos = new Vec2(col * tileSize.x + tileSize.x/2, row * tileSize.y + tileSize.y/2);
+                        // Create a new collider for this tile
+                        let collider = new AABB(tilePos, tileSize.scaled(1/2));
+
+                        // Calculate collision area between the node and the tile
+                        let area = particle.sweptRect.overlapArea(collider);
+                        if(area > 0){
+                            // We had a collision - delete the tile in the tilemap
+                            tilemap.setTileAtRowCol(new Vec2(col, row), 0);
+                            // Play a sound when we destroy the tile
+                            this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.getTileDestroyedKey(), loop: false, holdReference: false });
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Handle when the player enters the level end area.
@@ -262,6 +309,7 @@ export default abstract class HW4Level extends Scene {
         this.receiver.subscribe(HW4Events.PLAYER_ENTERED_LEVEL_END);
         this.receiver.subscribe(HW4Events.LEVEL_START);
         this.receiver.subscribe(HW4Events.LEVEL_END);
+        this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
     }
     /**
      * Adds in any necessary UI to the game
