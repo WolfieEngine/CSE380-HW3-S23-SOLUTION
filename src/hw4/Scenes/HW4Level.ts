@@ -7,7 +7,6 @@ import { TweenableProperties } from "../../Wolfie2D/Nodes/GameNode";
 import { GraphicType } from "../../Wolfie2D/Nodes/Graphics/GraphicTypes";
 import Rect from "../../Wolfie2D/Nodes/Graphics/Rect";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 import Label from "../../Wolfie2D/Nodes/UIElements/Label";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
@@ -20,11 +19,9 @@ import Color from "../../Wolfie2D/Utils/Color";
 import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import PlayerController, { PlayerTweens } from "../Player/PlayerController";
 import PlayerWeapon from "../Player/PlayerWeapon";
-import MainMenu from "./MainMenu";
 
 import { HW4Events } from "../HW4Events";
 import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
-import { HW4Sounds } from "../HW4Resources";
 
 /**
  * Enums for the layers in a HW4Level
@@ -42,24 +39,43 @@ export enum HW4Layers {
 export default abstract class HW4Level extends Scene {
     /** The particle system used for the player's weapon */
     protected playerWeaponSystem: PlayerWeapon
+    /** The key for the player's animated sprite */
+    protected playerSpriteKey: string;
     /** The animated sprite that is the player */
     protected player: AnimatedSprite;
+    /** The player's spawn position */
+    protected playerSpawn: Vec2;
 
 
-    // Stuff to end the level and go to the next level
+    /** The end of level stuff */
+
+    protected levelEndPosition: Vec2;
+    protected levelEndHalfSize: Vec2;
+
     protected levelEndArea: Rect;
     protected nextLevel: new (...args: any) => Scene;
     protected levelEndTimer: Timer;
     protected levelEndLabel: Label;
 
-    // Screen fade in/out for level start and end
+    // Level end transition timer and graphic
     protected levelTransitionTimer: Timer;
     protected levelTransitionScreen: Rect;
 
-    // The destrubtable layer of the tilemap
+    /** The keys to the tilemap and different tilemap layers */
+    protected tilemapKey: string;
+    protected destructibleLayerKey: string;
+    protected wallsLayerKey: string;
+    /** The scale for the tilemap */
+    protected tilemapScale: Vec2;
+    /** The destrubtable layer of the tilemap */
     protected destructable: OrthogonalTilemap;
-    // The wall layer of the tilemap
+    /** The wall layer of the tilemap */
     protected walls: OrthogonalTilemap;
+
+    /** Sound and music */
+    protected levelMusicKey: string;
+    protected jumpAudioKey: string;
+    protected tileDestroyedAudioKey: string;
 
     public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
         super(viewport, sceneManager, renderingManager, {...options, physics: {
@@ -84,17 +100,13 @@ export default abstract class HW4Level extends Scene {
         this.initLayers();
 
         // Initialize the tilemaps
-        let tilemapData = this.getTilemapData();
-        this.initializeTilemap(tilemapData.key, tilemapData.scale);
+        this.initializeTilemap();
 
         // Initialize the sprite and particle system for the players weapon 
         this.initializeWeaponSystem();
 
         // Initialize the player 
-        this.initializePlayer(this.getPlayerSpriteKey());
-
-        // Initialize the next level
-        this.nextLevel = this.getNextLevel();
+        this.initializePlayer(this.playerSpriteKey);
 
         // Initialize the viewport - this must come after the player has been initialized
         this.initializeViewport();
@@ -104,17 +116,11 @@ export default abstract class HW4Level extends Scene {
         // Initialize the ends of the levels - must be initialized after the primary layer has been added
         this.initializeLevelEnds();
 
-
         this.levelTransitionTimer = new Timer(500);
         this.levelEndTimer = new Timer(3000, () => {
             // After the level end timer ends, fade to black and then go to the next scene
             this.levelTransitionScreen.tweens.play("fadeIn");
         });
-
-        // Add physics to the destructible layer of the tilemap
-        this.destructable.addPhysics();
-        this.destructable.setGroup(HW4PhysicsGroups.DESTRUCTABLE);
-        this.destructable.setTrigger(HW4PhysicsGroups.PLAYER_WEAPON, HW4Events.PARTICLE_HIT_DESTRUCTIBLE, null);
 
         // Initially disable player movement
         Input.disableInput();
@@ -123,7 +129,7 @@ export default abstract class HW4Level extends Scene {
         this.levelTransitionScreen.tweens.play("fadeOut");
 
         // Start playing the level music for the HW4 level
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: this.getLevelMusic(), loop: true, holdReference: true});
+        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: this.levelMusicKey, loop: true, holdReference: true});
     }
 
     /* Update method for the scene plus a helper method for checking particle collisions */
@@ -203,7 +209,7 @@ export default abstract class HW4Level extends Scene {
                             // We had a collision - delete the tile in the tilemap
                             tilemap.setTileAtRowCol(new Vec2(col, row), 0);
                             // Play a sound when we destroy the tile
-                            this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.getTileDestroyedKey(), loop: false, holdReference: false });
+                            this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.tileDestroyedAudioKey, loop: false, holdReference: false });
                         }
                     }
                 }
@@ -215,8 +221,9 @@ export default abstract class HW4Level extends Scene {
      * Handle when the player enters the level end area.
      */
     protected handleEnteredLevelEnd(event: GameEvent): void {
-        // If there are no more geese and the timer hasn't run yet, start the end level animation
+        // If the timer hasn't run yet, start the end level animation
         if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
+            this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
             this.levelEndTimer.start();
             this.levelEndLabel.tweens.play("slideIn");
         }
@@ -238,12 +245,25 @@ export default abstract class HW4Level extends Scene {
      * @param key the key for the tilemap data
      * @param scale the scale factor for the tilemap
      */
-    protected initializeTilemap(key: string, scale?: Vec2): void {
+    protected initializeTilemap(): void {
+        if (this.tilemapKey === undefined || this.tilemapScale === undefined) {
+            throw new Error("Cannot add the homework 4 tilemap unless the tilemap key and scale are set.");
+        }
         // Add the tilemap to the scene
-        this.add.tilemap(key, scale);
+        this.add.tilemap(this.tilemapKey, this.tilemapScale);
+
+        if (this.destructibleLayerKey === undefined || this.wallsLayerKey === undefined) {
+            throw new Error("Make sure the keys for the destuctible layer and wall layer are both set");
+        }
+
         // Get the wall and destructible layers 
-        this.walls = this.getWalls();
-        this.destructable = this.getDestructible();
+        this.walls = this.getTilemap(this.wallsLayerKey) as OrthogonalTilemap;
+        this.destructable = this.getTilemap(this.destructibleLayerKey) as OrthogonalTilemap;
+
+        // Add physics to the destructible layer of the tilemap
+        this.destructable.addPhysics();
+        this.destructable.setGroup(HW4PhysicsGroups.DESTRUCTABLE);
+        this.destructable.setTrigger(HW4PhysicsGroups.PLAYER_WEAPON, HW4Events.PARTICLE_HIT_DESTRUCTIBLE, null);
     }
     /**
      * Handles all subscriptions to events
@@ -333,11 +353,14 @@ export default abstract class HW4Level extends Scene {
         if (this.playerWeaponSystem === undefined) {
             throw new Error("Player weapon system must be initialized before initializing the player!");
         }
+        if (this.playerSpawn === undefined) {
+            throw new Error("Player spawn must be set before initializing the player!");
+        }
 
         // Add the player to the scene
         this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
-        this.player.scale.set( 1, 1);
-        this.player.position.copy(this.getPlayerSpawn());
+        this.player.scale.set(1, 1);
+        this.player.position.copy(this.playerSpawn);
         
         // Give the player physics and setup collision groups and triggers for the player
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
@@ -402,60 +425,12 @@ export default abstract class HW4Level extends Scene {
         if (!this.layers.has(HW4Layers.PRIMARY)) {
             throw new Error("Can't initialize the level ends until the primary layer has been added to the scene!");
         }
-
-        let rects = this.getLevelEnds();
-        for (let rect of rects) {
-            this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: rect.position, size: rect.size });
-            this.levelEndArea.addPhysics(undefined, undefined, false, true);
-            this.levelEndArea.setTrigger(HW4PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
-            this.levelEndArea.color = new Color(0, 0, 0, 0);
-        }
+        
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize.scale(2) });
+        this.levelEndArea.addPhysics(undefined, undefined, false, true);
+        this.levelEndArea.setTrigger(HW4PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
+        this.levelEndArea.color = new Color(0, 0, 0, 0);
+        
     }
-
-
-    /* Abstract methods for getting/doing things specific to the level (Level1 or Level2) */
-
-    /**
-     * @returns the player's spawn position for the HW4Level as a Vec2.
-     */
-    protected abstract getPlayerSpawn(): Vec2;
-    /**
-     * @returns the constructor for the next HW4Level to load after this level
-     */
-    protected abstract getNextLevel(): new (...args: any[]) => Scene;
-    /**
-     * @returns the indestructible layer of the HW4 tilemap as an OrthogonalTilemap
-     */
-    protected abstract getWalls(): OrthogonalTilemap;
-    /**
-     * @returns the destructible layer of the HW4 tilemap as an OrthogonalTilemap 
-     */
-    protected abstract getDestructible(): OrthogonalTilemap;
-    /**
-     * @returns an object with the key to the tilemap data for this HW4Level
-     * and the scale factor for the tilemap as a Vec2 object.
-     */
-    protected abstract getTilemapData(): {key: string, scale: Vec2};
-
-    protected abstract getLevelEnds(): [{position: Vec2, size: Vec2}];
-
-    /**
-     * @returns the key associated with the level music for this HW4Level
-     */
-    protected abstract getLevelMusic(): string;
-    /**
-     * @returns the key associated with the player's sprite for this HW4Level
-     */
-    protected abstract getPlayerSpriteKey(): string;
-    /**
-     * @returns the key associated with the sound effect that should be played when the player dies.
-     */
-    protected abstract getPlayerDeathKey(): string;
-
-    /**
-     * @returns the key associated with the sound effect that should be player when a tile in the
-     * destructible layer of the tilemap is destroyed.
-     */
-    protected abstract getTileDestroyedKey(): string;
 
 }
