@@ -34,7 +34,7 @@ export enum HW4Layers {
 }
 
 /**
- * An abstract HW4 scene. 
+ * An abstract HW4 scene class.
  */
 export default abstract class HW4Level extends Scene {
     /** The particle system used for the player's weapon */

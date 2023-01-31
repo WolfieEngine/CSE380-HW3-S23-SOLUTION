@@ -18,6 +18,7 @@ export default class Level1 extends HW4Level {
     public static readonly PLAYER_SPRITE_PATH: string = "hw4_assets/spritesheets/Peter.json";
 
     public static readonly TILEMAP_KEY: string = "LEVEL1";
+    public static readonly TILEMAP_PATH: string = "hw4_assets/tilemaps/HW4Level1.json";
     public static readonly TILEMAP_SCALE = new Vec2(2, 2);
     public static readonly DESTRUCTIBLE_LAYER_KEY: string = "Destructable";
     public static readonly WALLS_LAYER_KEY: string = "Main";
@@ -62,14 +63,13 @@ export default class Level1 extends HW4Level {
      */
     public loadScene(): void {
         // Load in the tilemap
-        this.load.tilemap(this.tilemapKey, HW4Level1Tilemap.PATH);
+        this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
         // Load in the player's sprite
         this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
         
         // Audio and music
         this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
         this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
-
         this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
     }
 
