@@ -4,7 +4,6 @@ import PlayerState from "./PlayerState";
 export default class Fall extends PlayerState {
 
     onEnter(options: Record<string, any>): void {
-        console.log("Falling!");
         // If we're falling, the vertical velocity should be >= 0
         this.parent.velocity.y = 0;
     }

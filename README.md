@@ -18,17 +18,7 @@ In this assignment, you will make a simple platformer game using the Typescript 
 * How to create simple AI using finite state machines
 * Resource management 
 
-## Part 1 - Tilemaps and Tilesets 
-
-### Part 1.1 - Creating a Tileset
-
-### Part 1.2 - Creating a Tilemap (with Tiled)
-For this assignment, you have to make use of Tileds custom layer properties. In Tiled, you have the option to add custom properties and fields to your tilemaps and layers. Wolfie2D supports two physics properties for tilemap layers. They are as follows:
-
-| Name       | Type    | Description |
-|------------|---------|-------------|
-| Collidable | boolean | True if this tilemap layer is collidable                                 |
-| Group      | string  | The name of the physics group this tilemap layer should be registered to |
+## Part 1 - Sound Effects and Level Music
 
 ## Part 2 - Physics
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
@@ -153,7 +143,16 @@ type TriggerEventData = {
 }
 ```
 
-## Particle Systems
+## Part 3 - Particle Systems
 In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The `PlayerWeapon` extends the base `ParticeSystem` class, sprinkling in some extra bits of functionality, turning the particle system into a weapon.
+
+## Part 4 - Tweening
+Creating and playing tweens in Wolfie2D. Probably the flip and level end slide in animation.
+
+## Part 5 - Playing Sound
+Firing events to the audio manager in Wolfie2d. Start, stop, playing sounds on a loop for music.
+
+## Part 6 - Resource Management
+Unloading and loading resources into the game (different tilemaps, custom sounds/music, custom sprites)
 
 

@@ -13,7 +13,16 @@ import Input from "../../Wolfie2D/Input/Input";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
 import { HW4Controls } from "../HW4Controls";
+import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
 
+/**
+ * Animation keys for the player spritesheet
+ */
+export enum PlayerAnimations {
+    IDLE = "IDLE",
+    WALK = "WALK",
+    JUMP = "JUMP",
+}
 
 /**
  * Tween animations the player can player.
@@ -39,7 +48,7 @@ export default class PlayerController extends StateMachineAI {
     public readonly MAX_SPEED: number = 200;
     public readonly MIN_SPEED: number = 100;
 
-    protected owner: AnimatedSprite;
+    protected owner: HW4AnimatedSprite;
 
     protected _velocity: Vec2;
 	protected _speed: number;
@@ -49,7 +58,7 @@ export default class PlayerController extends StateMachineAI {
     protected weapon: PlayerWeapon;
 
     
-    public initializeAI(owner: AnimatedSprite, options: Record<string, any>){
+    public initializeAI(owner: HW4AnimatedSprite, options: Record<string, any>){
         this.owner = owner;
 
         this.weapon = options.weaponSystem;

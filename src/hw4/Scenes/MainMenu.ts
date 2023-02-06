@@ -6,7 +6,6 @@ import Scene from "../../Wolfie2D/Scene/Scene";
 import Color from "../../Wolfie2D/Utils/Color";
 import Level1 from "./HW4Level1";
 
-import { HW4Sounds } from "../HW4Resources";
 
 // Layers for the main menu scene
 export enum MenuLayers {
@@ -17,7 +16,7 @@ export default class MainMenu extends Scene {
 
     public loadScene(): void {
         // Load the menu song
-        this.load.audio(HW4Sounds.MENU_MUSIC_KEY, HW4Sounds.MENU_MUSIC_PATH);
+        // this.load.audio(HW4Sounds.MENU_MUSIC_KEY, HW4Sounds.MENU_MUSIC_PATH);
     }
 
     public startScene(): void {
@@ -42,12 +41,12 @@ export default class MainMenu extends Scene {
         }
 
         // Scene has started, so start playing music
-        this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY, loop: true, holdReference: true});
+        // this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY, loop: true, holdReference: true});
     }
 
     public unloadScene(): void {
         // The scene is being destroyed, so we can stop playing the song
-        this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY});
+        // this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: HW4Sounds.MENU_MUSIC_KEY});
     }
 }
 
