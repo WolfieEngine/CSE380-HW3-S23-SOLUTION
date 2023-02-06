@@ -2,13 +2,12 @@ import GameEvent from "../../../Wolfie2D/Events/GameEvent";
 import { GameEventType } from "../../../Wolfie2D/Events/GameEventType";
 import { PlayerStates, PlayerTweens } from "../PlayerController";
 
-import { HW4Sounds } from "../../HW4Resources";
 import PlayerState from "./PlayerState";
 
 export default class Jump extends PlayerState {
 
 	public onEnter(options: Record<string, any>): void {
-        console.log("Jumping!");
+        let scene = this.owner.getScene()
         
         // Give the player a burst of upward momentum
         this.parent.velocity.y = -200;
@@ -19,7 +18,7 @@ export default class Jump extends PlayerState {
         }
 
         // Play the jump sound for the player
-		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: HW4Sounds.JUMP_AUDIO_KEY, loop: false, holdReference: false});
+		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: scene.getJumpAudioKey(), loop: false, holdReference: false});
 	}
 
 	public update(deltaT: number): void {

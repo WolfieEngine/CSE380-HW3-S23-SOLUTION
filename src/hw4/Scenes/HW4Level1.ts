@@ -1,11 +1,9 @@
 import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
 import HW4Level from "./HW4Level";
-import { HW4Sprites, HW4PlayerSpritesheet, HW4GooseSpritesheet, HW4Sounds, HW4Level1Tilemap } from "../HW4Resources";
 import RenderingManager from "../../Wolfie2D/Rendering/RenderingManager";
 import SceneManager from "../../Wolfie2D/Scene/SceneManager";
 import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
-import MainMenu from "./MainMenu";
 import HW4Level2 from "./HW4Level2";
 
 /**
@@ -76,23 +74,6 @@ export default class Level1 extends HW4Level {
     public startScene(): void {
         super.startScene();
         this.nextLevel = HW4Level2;
-    }
-
-    /**
-     * Unload resources and decide which resources keep for the next scene.
-     */
-    public unloadScene(){
-        // Keep the spritesheets for the player and the goose
-        this.load.keepSpritesheet(HW4PlayerSpritesheet.KEY);
-        this.load.keepSpritesheet(HW4GooseSpritesheet.KEY);
-        // Keep the weapon image
-        this.load.keepImage(HW4Sprites.WEAPON_KEY);
-        // Keep all the music and the sound
-        this.load.keepAudio(HW4Sounds.LEVEL_MUSIC_KEY);
-        this.load.keepAudio(HW4Sounds.JUMP_AUDIO_KEY);
-        this.load.keepAudio(HW4Sounds.DEATH_AUDIO_KEY);
-        this.load.keepAudio(HW4Sounds.TILE_DESTROYED_KEY);
-        this.load.keepAudio(HW4Sounds.HIT_AUDIO_KEY);
     }
 
     /**
