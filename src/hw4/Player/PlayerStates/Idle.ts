@@ -1,5 +1,4 @@
-import { PlayerStates } from "../PlayerController";
-import { HW4PlayerSpritesheet } from "../../HW4Resources";
+import { PlayerStates, PlayerAnimations } from "../PlayerController";
 import PlayerState from "./PlayerState";
 import Input from "../../../Wolfie2D/Input/Input";
 import { HW4Controls } from "../../HW4Controls";
@@ -7,8 +6,7 @@ import { HW4Controls } from "../../HW4Controls";
 export default class Idle extends PlayerState {
 
 	public onEnter(options: Record<string, any>): void {
-        console.log("Idling")
-        this.owner.animation.play(HW4PlayerSpritesheet.IDLE);
+        this.owner.animation.play(PlayerAnimations.IDLE);
 		this.parent.speed = this.parent.MIN_SPEED;
 
         this.parent.velocity.x = 0;

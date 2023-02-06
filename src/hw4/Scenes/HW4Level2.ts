@@ -1,14 +1,8 @@
 import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
-import Scene from "../../Wolfie2D/Scene/Scene";
 import HW4Level from "./HW4Level";
 import MainMenu from "./MainMenu";
 
-import { 
-    HW4Sounds, HW4Sprites, HW4Level2Tilemap, 
-    HW4GooseSpritesheet, HW4PlayerSpritesheet 
-} from "../HW4Resources";
 import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
 import RenderingManager from "../../Wolfie2D/Rendering/RenderingManager";
 import SceneManager from "../../Wolfie2D/Scene/SceneManager";

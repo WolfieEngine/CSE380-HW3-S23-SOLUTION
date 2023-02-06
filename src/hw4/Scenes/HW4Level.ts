@@ -22,6 +22,7 @@ import PlayerWeapon from "../Player/PlayerWeapon";
 
 import { HW4Events } from "../HW4Events";
 import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
+import HW4FactoryManager from "../Factory/HW4FactoryManager";
 
 /**
  * Enums for the layers in a HW4Level
@@ -37,6 +38,11 @@ export enum HW4Layers {
  * An abstract HW4 scene class.
  */
 export default abstract class HW4Level extends Scene {
+
+    /** Overrride the factory manager */
+    public add: HW4FactoryManager;
+
+
     /** The particle system used for the player's weapon */
     protected playerWeaponSystem: PlayerWeapon
     /** The key for the player's animated sprite */
@@ -93,6 +99,7 @@ export default abstract class HW4Level extends Scene {
                 [0, 1, 1, 0],
             ]
         }});
+        this.add = new HW4FactoryManager(this, this.tilemaps);
     }
 
     public startScene(): void {
@@ -358,7 +365,7 @@ export default abstract class HW4Level extends Scene {
         }
 
         // Add the player to the scene
-        this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
+        this.player = this.add.hw3AnimatedSprite(key, HW4Layers.PRIMARY);
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
@@ -433,4 +440,7 @@ export default abstract class HW4Level extends Scene {
         
     }
 
+    public getJumpAudioKey(): string {
+        return this.jumpAudioKey
+    }
 }
