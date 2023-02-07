@@ -14,40 +14,50 @@ import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
 import { HW4Controls } from "../HW4Controls";
 import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
+import MathUtils from "../../Wolfie2D/Utils/MathUtils";
+import { HW4Events } from "../HW4Events";
+import Dead from "./PlayerStates/Dead";
 
 /**
  * Animation keys for the player spritesheet
  */
-export enum PlayerAnimations {
-    IDLE = "IDLE",
-    WALK = "WALK",
-    JUMP = "JUMP",
-}
+export const PlayerAnimations = {
+    IDLE: "IDLE",
+    WALK: "WALK",
+    JUMP: "JUMP",
+} as const
 
 /**
  * Tween animations the player can player.
  */
-export enum PlayerTweens {
-    FLIP = "FLIP",
-    DEATH = "DEATH"
-}
+export const PlayerTweens = {
+    FLIP: "FLIP",
+    DEATH: "DEATH"
+} as const
 
 /**
  * Keys for the states the PlayerController can be in.
  */
-export enum PlayerStates {
-    IDLE = "IDLE",
-    WALK = "WALK",
-	JUMP = "JUMP",
-    FALL = "FALL",
-    // This is a bad thing but it has to stay for now - PeteyLumpkins
-	PREVIOUS = "previous"
-}
+export const PlayerStates = {
+    IDLE: "IDLE",
+    WALK: "WALK",
+	JUMP: "JUMP",
+    FALL: "FALL",
+    DEAD: "DEAD",
+} as const
 
+/**
+ * The controller that controls the player.
+ */
 export default class PlayerController extends StateMachineAI {
     public readonly MAX_SPEED: number = 200;
     public readonly MIN_SPEED: number = 100;
 
+    /** Health and max health for the player */
+    protected _health: number;
+    protected _maxHealth: number;
+
+    /** The players game node */
     protected owner: HW4AnimatedSprite;
 
     protected _velocity: Vec2;
@@ -67,11 +77,16 @@ export default class PlayerController extends StateMachineAI {
         this.speed = 400;
         this.velocity = Vec2.ZERO;
 
+        this.health = 10
+        this.maxHealth = 10;
+
         // Add the different states the player can be in to the PlayerController 
 		this.addState(PlayerStates.IDLE, new Idle(this, this.owner));
 		this.addState(PlayerStates.WALK, new Walk(this, this.owner));
         this.addState(PlayerStates.JUMP, new Jump(this, this.owner));
         this.addState(PlayerStates.FALL, new Fall(this, this.owner));
+        this.addState(PlayerStates.DEAD, new Dead(this, this.owner));
+        
         // Start the player in the Idle state
         this.initialize(PlayerStates.IDLE);
     }
@@ -86,7 +101,7 @@ export default class PlayerController extends StateMachineAI {
 		return direction;
     }
     /** 
-     * Gets the direction of the mouse from the player's position
+     * Gets the direction of the mouse from the player's position as a Vec2
      */
     public get faceDir(): Vec2 { return this.owner.position.dirTo(Input.getGlobalMousePosition()); }
 
@@ -112,6 +127,19 @@ export default class PlayerController extends StateMachineAI {
 
     public get velocity(): Vec2 { return this._velocity; }
     public set velocity(velocity: Vec2) { this._velocity = velocity; }
+
     public get speed(): number { return this._speed; }
     public set speed(speed: number) { this._speed = speed; }
+
+    public get maxHealth(): number { return this._maxHealth; }
+    public set maxHealth(maxHealth: number) { this._maxHealth = maxHealth; }
+
+    public get health(): number { return this._health; }
+    public set health(health: number) { 
+        this._health = MathUtils.clamp(health, 0, this.maxHealth);
+        // When the health changes, fire an event up to the scene.
+        this.emitter.fireEvent(HW4Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
+        // If the health hit 0, change the state of the player
+        if (this.health === 0) { this.changeState(PlayerStates.DEAD); }
+    }
 }

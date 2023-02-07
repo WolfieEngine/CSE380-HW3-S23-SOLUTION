@@ -1,6 +1,5 @@
 import State from "../../../Wolfie2D/DataTypes/State/State";
 import GameEvent from "../../../Wolfie2D/Events/GameEvent";
-import AnimatedSprite from "../../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 import MathUtils from "../../../Wolfie2D/Utils/MathUtils";
 import HW4AnimatedSprite from "../../Nodes/HW4AnimatedSprite";
 import PlayerController from "../PlayerController";

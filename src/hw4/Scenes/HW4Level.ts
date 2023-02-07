@@ -23,16 +23,17 @@ import PlayerWeapon from "../Player/PlayerWeapon";
 import { HW4Events } from "../HW4Events";
 import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
 import HW4FactoryManager from "../Factory/HW4FactoryManager";
+import MainMenu from "./MainMenu";
 
 /**
  * Enums for the layers in a HW4Level
  */
-export enum HW4Layers {
+export const HW4Layers = {
     // The primary layer in the HW4Scene 
-    PRIMARY = "PRIMARY",
+    PRIMARY: "PRIMARY",
     // The UI layer in the HW4Scene
-    UI = "UI"
-}
+    UI: "UI"
+} as const;
 
 /**
  * An abstract HW4 scene class.
@@ -51,6 +52,10 @@ export default abstract class HW4Level extends Scene {
     protected player: AnimatedSprite;
     /** The player's spawn position */
     protected playerSpawn: Vec2;
+
+    private healthLabel: Label;
+	private healthBar: Label;
+	private healthBarBg: Label;
 
 
     /** The end of level stuff */
@@ -119,6 +124,7 @@ export default abstract class HW4Level extends Scene {
         this.initializeViewport();
         this.subscribeToEvents();
         this.initializeUI();
+        
 
         // Initialize the ends of the levels - must be initialized after the primary layer has been added
         this.initializeLevelEnds();
@@ -139,7 +145,7 @@ export default abstract class HW4Level extends Scene {
         this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: this.levelMusicKey, loop: true, holdReference: true});
     }
 
-    /* Update method for the scene plus a helper method for checking particle collisions */
+    /* Update method for the scene */
 
     public updateScene(deltaT: number) {
         // Handle all game events
@@ -155,7 +161,7 @@ export default abstract class HW4Level extends Scene {
     protected handleEvent(event: GameEvent): void {
         switch (event.type) {
             case HW4Events.PLAYER_ENTERED_LEVEL_END: {
-                this.handleEnteredLevelEnd(event);
+                this.handleEnteredLevelEnd();
                 break;
             }
             // When the level starts, reenable user input
@@ -165,11 +171,21 @@ export default abstract class HW4Level extends Scene {
             }
             // When the level ends, change the scene to the next level
             case HW4Events.LEVEL_END: {
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
             case HW4Events.PARTICLE_HIT_DESTRUCTIBLE: {
                 this.handleParticleHit(event.data.get("node"));
+                break;
+            }
+            case HW4Events.HEALTH_CHANGE: {
+                this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
+                break;
+            }
+            case HW4Events.PLAYER_DEAD: {
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
+                this.sceneManager.changeToScene(MainMenu);
                 break;
             }
             // Default: Throw an error! No unhandled events allowed.
@@ -181,6 +197,10 @@ export default abstract class HW4Level extends Scene {
 
     /* Handlers for the different events the scene is subscribed to */
 
+    /**
+     * Handle particle hit events
+     * @param particleId the id of the particle
+     */
     protected handleParticleHit(particleId: number): void {
         let particles = this.playerWeaponSystem.getPool();
 
@@ -223,18 +243,31 @@ export default abstract class HW4Level extends Scene {
             }
         }
     }
-
     /**
-     * Handle when the player enters the level end area.
+     * Handle the event when the player enters the level end area.
      */
-    protected handleEnteredLevelEnd(event: GameEvent): void {
+    protected handleEnteredLevelEnd(): void {
         // If the timer hasn't run yet, start the end level animation
         if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
-            this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
             this.levelEndTimer.start();
             this.levelEndLabel.tweens.play("slideIn");
         }
     }
+    /**
+     * This is the same healthbar I used for hw2. I've adapted it slightly to account for the zoom factor. Other than that, the
+     * code is basically the same.
+     * 
+     * @param currentHealth the current health of the player
+     * @param maxHealth the maximum health of the player
+     */
+    protected handleHealthChange(currentHealth: number, maxHealth: number): void {
+		let unit = this.healthBarBg.size.x / maxHealth;
+        
+		this.healthBar.size.set(this.healthBarBg.size.x - unit * (maxHealth - currentHealth), this.healthBarBg.size.y);
+		this.healthBar.position.set(this.healthBarBg.position.x - (unit / 2 / this.getViewScale()) * (maxHealth - currentHealth), this.healthBarBg.position.y);
+
+		this.healthBar.backgroundColor = currentHealth < maxHealth * 1/4 ? Color.RED: currentHealth < maxHealth * 3/4 ? Color.YELLOW : Color.GREEN;
+	}
 
     /* Initialization methods for everything in the scene */
 
@@ -280,11 +313,29 @@ export default abstract class HW4Level extends Scene {
         this.receiver.subscribe(HW4Events.LEVEL_START);
         this.receiver.subscribe(HW4Events.LEVEL_END);
         this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
+        this.receiver.subscribe(HW4Events.HEALTH_CHANGE);
+        this.receiver.subscribe(HW4Events.PLAYER_DEAD);
     }
     /**
      * Adds in any necessary UI to the game
      */
     protected initializeUI(): void {
+
+        // HP Label
+		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(205, 20), text: "HP "});
+		this.healthLabel.size.set(300, 30);
+		this.healthLabel.fontSize = 24;
+		this.healthLabel.font = "Courier";
+
+        // HealthBar
+		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBar.size = new Vec2(300, 25);
+		this.healthBar.backgroundColor = Color.GREEN;
+
+        // HealthBar Border
+		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBarBg.size = new Vec2(300, 25);
+		this.healthBarBg.borderColor = Color.BLACK;
 
         // End of level label (start off screen)
         this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
@@ -365,7 +416,7 @@ export default abstract class HW4Level extends Scene {
         }
 
         // Add the player to the scene
-        this.player = this.add.hw3AnimatedSprite(key, HW4Layers.PRIMARY);
+        this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
@@ -404,7 +455,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.PLAYER_KILLED
+            onEnd: HW4Events.PLAYER_DEAD
         });
 
         // Give the player it's AI
@@ -424,7 +475,6 @@ export default abstract class HW4Level extends Scene {
         this.viewport.setZoomLevel(4);
         this.viewport.setBounds(0, 0, 512, 512);
     }
-
     /**
      * Initializes the level end area
      */
@@ -433,13 +483,16 @@ export default abstract class HW4Level extends Scene {
             throw new Error("Can't initialize the level ends until the primary layer has been added to the scene!");
         }
         
-        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize.scale(2) });
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
         this.levelEndArea.setTrigger(HW4PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
-        this.levelEndArea.color = new Color(0, 0, 0, 0);
+        this.levelEndArea.color = new Color(255, 0, 255, .20);
         
     }
 
+    /* Misc methods */
+
+    // Get the key of the player's jump audio file
     public getJumpAudioKey(): string {
         return this.jumpAudioKey
     }
