@@ -13,18 +13,18 @@ import Level1 from "./HW4Level1";
  */
 export default class Level2 extends HW4Level {
 
-    public static readonly PLAYER_SPAWN: Vec2 = new Vec2(32, 32);
-    public static readonly PLAYER_SPRITE_KEY: string = "PLAYER_SPRITE_KEY";
-    public static readonly PLAYER_SPRITE_PATH: string = "hw4_assets/spritesheets/Peter.json";
+    public static readonly PLAYER_SPAWN = new Vec2(32, 32);
+    public static readonly PLAYER_SPRITE_KEY = "PLAYER_SPRITE_KEY";
+    public static readonly PLAYER_SPRITE_PATH = "hw4_assets/spritesheets/Peter.json";
 
-    public static readonly TILEMAP_KEY: string = "LEVEL2";
-    public static readonly TILEMAP_PATH: string = "hw4_assets/tilemaps/HW4Level2.json";
+    public static readonly TILEMAP_KEY = "LEVEL2";
+    public static readonly TILEMAP_PATH = "hw4_assets/tilemaps/HW4Level2.json";
     public static readonly TILEMAP_SCALE = new Vec2(2, 2);
-    public static readonly DESTRUCTIBLE_LAYER_KEY: string = "Destructable";
-    public static readonly WALLS_LAYER_KEY: string = "Main";
+    public static readonly DESTRUCTIBLE_LAYER_KEY = "Destructable";
+    public static readonly WALLS_LAYER_KEY = "Main";
 
-    public static readonly LEVEL_MUSIC_KEY: string = "LEVEL_MUSIC";
-    public static readonly LEVEL_MUSIC_PATH: string = "hw4_assets/music/hw5_level_music.wav";
+    public static readonly LEVEL_MUSIC_KEY = "LEVEL_MUSIC";
+    public static readonly LEVEL_MUSIC_PATH = "hw4_assets/music/hw5_level_music.wav";
 
     public static readonly JUMP_AUDIO_KEY = "PLAYER_JUMP";
     public static readonly JUMP_AUDIO_PATH = "hw4_assets/sounds/jump.wav";
