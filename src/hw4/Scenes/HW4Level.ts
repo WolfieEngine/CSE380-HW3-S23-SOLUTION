@@ -472,10 +472,10 @@ export default abstract class HW4Level extends Scene {
             throw new Error("Can't initialize the level ends until the primary layer has been added to the scene!");
         }
         
-        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize.scale(2) });
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
         this.levelEndArea.setTrigger(HW4PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
-        this.levelEndArea.color = new Color(0, 0, 0, 0);
+        this.levelEndArea.color = new Color(255, 0, 255, .20);
         
     }
 
