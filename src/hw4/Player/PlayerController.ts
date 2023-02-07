@@ -21,30 +21,30 @@ import Dead from "./PlayerStates/Dead";
 /**
  * Animation keys for the player spritesheet
  */
-export enum PlayerAnimations {
-    IDLE = "IDLE",
-    WALK = "WALK",
-    JUMP = "JUMP",
-}
+export const PlayerAnimations = {
+    IDLE: "IDLE",
+    WALK: "WALK",
+    JUMP: "JUMP",
+} as const
 
 /**
  * Tween animations the player can player.
  */
-export enum PlayerTweens {
-    FLIP = "FLIP",
-    DEATH = "DEATH"
-}
+export const PlayerTweens = {
+    FLIP: "FLIP",
+    DEATH: "DEATH"
+} as const
 
 /**
  * Keys for the states the PlayerController can be in.
  */
-export enum PlayerStates {
-    IDLE = "IDLE",
-    WALK = "WALK",
-	JUMP = "JUMP",
-    FALL = "FALL",
-    DEAD = "DEAD",
-}
+export const PlayerStates = {
+    IDLE: "IDLE",
+    WALK: "WALK",
+	JUMP: "JUMP",
+    FALL: "FALL",
+    DEAD: "DEAD",
+} as const
 
 export default class PlayerController extends StateMachineAI {
     public readonly MAX_SPEED: number = 200;

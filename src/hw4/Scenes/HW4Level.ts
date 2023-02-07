@@ -28,12 +28,12 @@ import MainMenu from "./MainMenu";
 /**
  * Enums for the layers in a HW4Level
  */
-export enum HW4Layers {
+export const HW4Layers = {
     // The primary layer in the HW4Scene 
-    PRIMARY = "PRIMARY",
+    PRIMARY: "PRIMARY",
     // The UI layer in the HW4Scene
-    UI = "UI"
-}
+    UI: "UI"
+} as const;
 
 /**
  * An abstract HW4 scene class.
