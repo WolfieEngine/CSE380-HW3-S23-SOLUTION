@@ -38,4 +38,7 @@ export enum HW4Events {
 
     // The event sent when a particle hits a tile in the destructible tilemap layer
     PARTICLE_HIT_DESTRUCTIBLE = "PARTICLE_HIT_DESTRUCTIBLE",
+
+    //
+    PLAYER_DEAD = "PLAYER_DEAD"
 }

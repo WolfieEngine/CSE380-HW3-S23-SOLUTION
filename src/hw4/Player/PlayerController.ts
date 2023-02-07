@@ -16,6 +16,7 @@ import { HW4Controls } from "../HW4Controls";
 import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 import { HW4Events } from "../HW4Events";
+import Dead from "./PlayerStates/Dead";
 
 /**
  * Animation keys for the player spritesheet
@@ -42,8 +43,7 @@ export enum PlayerStates {
     WALK = "WALK",
 	JUMP = "JUMP",
     FALL = "FALL",
-    // This is a bad thing but it has to stay for now - PeteyLumpkins
-	PREVIOUS = "previous"
+    DEAD = "DEAD",
 }
 
 export default class PlayerController extends StateMachineAI {
@@ -80,6 +80,7 @@ export default class PlayerController extends StateMachineAI {
 		this.addState(PlayerStates.WALK, new Walk(this, this.owner));
         this.addState(PlayerStates.JUMP, new Jump(this, this.owner));
         this.addState(PlayerStates.FALL, new Fall(this, this.owner));
+        this.addState(PlayerStates.DEAD, new Dead(this, this.owner));
         // Start the player in the Idle state
         this.initialize(PlayerStates.IDLE);
     }
@@ -135,7 +136,10 @@ export default class PlayerController extends StateMachineAI {
     public get health(): number { return this._health; }
     public set health(health: number) { 
         this._health = MathUtils.clamp(health, 0, this.maxHealth);
-        console.log(`Updating health ${this.health}`);
         this.emitter.fireEvent(HW4Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
+
+        if (this.health === 0) {
+            this.changeState(PlayerStates.DEAD);
+        }
     }
 }

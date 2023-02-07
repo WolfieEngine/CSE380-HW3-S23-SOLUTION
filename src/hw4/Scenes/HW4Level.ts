@@ -23,6 +23,7 @@ import PlayerWeapon from "../Player/PlayerWeapon";
 import { HW4Events } from "../HW4Events";
 import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
 import HW4FactoryManager from "../Factory/HW4FactoryManager";
+import MainMenu from "./MainMenu";
 
 /**
  * Enums for the layers in a HW4Level
@@ -160,7 +161,7 @@ export default abstract class HW4Level extends Scene {
     protected handleEvent(event: GameEvent): void {
         switch (event.type) {
             case HW4Events.PLAYER_ENTERED_LEVEL_END: {
-                this.handleEnteredLevelEnd(event);
+                this.handleEnteredLevelEnd();
                 break;
             }
             // When the level starts, reenable user input
@@ -179,6 +180,10 @@ export default abstract class HW4Level extends Scene {
             }
             case HW4Events.HEALTH_CHANGE: {
                 this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
+                break;
+            }
+            case HW4Events.PLAYER_DEAD: {
+                this.handlePlayerDead();
                 break;
             }
             // Default: Throw an error! No unhandled events allowed.
@@ -232,10 +237,7 @@ export default abstract class HW4Level extends Scene {
             }
         }
     }
-    /**
-     * Handle when the player enters the level end area.
-     */
-    protected handleEnteredLevelEnd(event: GameEvent): void {
+    protected handleEnteredLevelEnd(): void {
         // If the timer hasn't run yet, start the end level animation
         if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
             this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
@@ -253,6 +255,9 @@ export default abstract class HW4Level extends Scene {
 
 		this.healthBar.backgroundColor = currentHealth < maxHealth * 1/4 ? Color.RED: currentHealth < maxHealth * 3/4 ? Color.YELLOW : Color.GREEN;
 	}
+    protected handlePlayerDead(): void {
+        this.sceneManager.changeToScene(MainMenu);
+    }
 
     /* Initialization methods for everything in the scene */
 
@@ -299,6 +304,7 @@ export default abstract class HW4Level extends Scene {
         this.receiver.subscribe(HW4Events.LEVEL_END);
         this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
         this.receiver.subscribe(HW4Events.HEALTH_CHANGE);
+        this.receiver.subscribe(HW4Events.PLAYER_DEAD);
     }
     /**
      * Adds in any necessary UI to the game
@@ -439,7 +445,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.PLAYER_KILLED
+            onEnd: HW4Events.PLAYER_DEAD
         });
 
         // Give the player it's AI
