@@ -11,18 +11,18 @@ import HW4Level2 from "./HW4Level2";
  */
 export default class Level1 extends HW4Level {
 
-    public static readonly PLAYER_SPAWN: Vec2 = new Vec2(32, 32);
-    public static readonly PLAYER_SPRITE_KEY: string = "PLAYER_SPRITE_KEY";
-    public static readonly PLAYER_SPRITE_PATH: string = "hw4_assets/spritesheets/Peter.json";
+    public static readonly PLAYER_SPAWN = new Vec2(32, 32);
+    public static readonly PLAYER_SPRITE_KEY = "PLAYER_SPRITE_KEY";
+    public static readonly PLAYER_SPRITE_PATH = "hw4_assets/spritesheets/Peter.json";
 
-    public static readonly TILEMAP_KEY: string = "LEVEL1";
-    public static readonly TILEMAP_PATH: string = "hw4_assets/tilemaps/HW4Level1.json";
+    public static readonly TILEMAP_KEY = "LEVEL1";
+    public static readonly TILEMAP_PATH = "hw4_assets/tilemaps/HW4Level1.json";
     public static readonly TILEMAP_SCALE = new Vec2(2, 2);
-    public static readonly DESTRUCTIBLE_LAYER_KEY: string = "Destructable";
-    public static readonly WALLS_LAYER_KEY: string = "Main";
+    public static readonly DESTRUCTIBLE_LAYER_KEY = "Destructable";
+    public static readonly WALLS_LAYER_KEY = "Main";
 
-    public static readonly LEVEL_MUSIC_KEY: string = "LEVEL_MUSIC";
-    public static readonly LEVEL_MUSIC_PATH: string = "hw4_assets/music/hw5_level_music.wav";
+    public static readonly LEVEL_MUSIC_KEY = "LEVEL_MUSIC";
+    public static readonly LEVEL_MUSIC_PATH = "hw4_assets/music/hw5_level_music.wav";
 
     public static readonly JUMP_AUDIO_KEY = "PLAYER_JUMP";
     public static readonly JUMP_AUDIO_PATH = "hw4_assets/sounds/jump.wav";
@@ -64,15 +64,25 @@ export default class Level1 extends HW4Level {
         this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
         // Load in the player's sprite
         this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
-        
         // Audio and music
         this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
         this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
         this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
     }
 
+    /**
+     * Unload resources for level 1 - decide what to keep
+     */
+    public unload(): void {
+        this.load.keepSpritesheet(this.playerSpriteKey);
+        this.load.keepAudio(this.levelMusicKey);
+        this.load.keepAudio(this.jumpAudioKey);
+        this.load.keepAudio(this.tileDestroyedAudioKey);
+    }
+
     public startScene(): void {
         super.startScene();
+        // Set the next level to be Level2
         this.nextLevel = HW4Level2;
     }
 
@@ -80,7 +90,7 @@ export default class Level1 extends HW4Level {
      * I had to override this method to adjust the viewport for the first level. I screwed up 
      * when I was making the tilemap for the first level is what it boils down to.
      * 
-     * PeteyLumpkins
+     * - Peter
      */
     protected initializeViewport(): void {
         super.initializeViewport();

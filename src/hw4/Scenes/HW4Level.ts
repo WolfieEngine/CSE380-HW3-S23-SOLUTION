@@ -145,7 +145,7 @@ export default abstract class HW4Level extends Scene {
         this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: this.levelMusicKey, loop: true, holdReference: true});
     }
 
-    /* Update method for the scene plus a helper method for checking particle collisions */
+    /* Update method for the scene */
 
     public updateScene(deltaT: number) {
         // Handle all game events
@@ -197,6 +197,10 @@ export default abstract class HW4Level extends Scene {
 
     /* Handlers for the different events the scene is subscribed to */
 
+    /**
+     * Handle particle hit events
+     * @param particleId the id of the particle
+     */
     protected handleParticleHit(particleId: number): void {
         let particles = this.playerWeaponSystem.getPool();
 
@@ -239,6 +243,9 @@ export default abstract class HW4Level extends Scene {
             }
         }
     }
+    /**
+     * Handle the event when the player enters the level end area.
+     */
     protected handleEnteredLevelEnd(): void {
         // If the timer hasn't run yet, start the end level animation
         if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
@@ -246,6 +253,13 @@ export default abstract class HW4Level extends Scene {
             this.levelEndLabel.tweens.play("slideIn");
         }
     }
+    /**
+     * This is the same healthbar I used for hw2. I've adapted it slightly to account for the zoom factor. Other than that, the
+     * code is basically the same.
+     * 
+     * @param currentHealth the current health of the player
+     * @param maxHealth the maximum health of the player
+     */
     protected handleHealthChange(currentHealth: number, maxHealth: number): void {
 		let unit = this.healthBarBg.size.x / maxHealth;
         
@@ -402,7 +416,7 @@ export default abstract class HW4Level extends Scene {
         }
 
         // Add the player to the scene
-        this.player = this.add.hw3AnimatedSprite(key, HW4Layers.PRIMARY);
+        this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
@@ -461,7 +475,6 @@ export default abstract class HW4Level extends Scene {
         this.viewport.setZoomLevel(4);
         this.viewport.setBounds(0, 0, 512, 512);
     }
-
     /**
      * Initializes the level end area
      */
@@ -477,6 +490,9 @@ export default abstract class HW4Level extends Scene {
         
     }
 
+    /* Misc methods */
+
+    // Get the key of the player's jump audio file
     public getJumpAudioKey(): string {
         return this.jumpAudioKey
     }
