@@ -1,6 +1,5 @@
 import Game from "./Wolfie2D/Loop/Game";
 import MainMenu from "./hw4/Scenes/MainMenu";
-
 import { HW4Controls } from "./hw4/HW4Controls";
 
 // The main function is your entrypoint into Wolfie2D. Specify your first scene and any options here.
