@@ -52,6 +52,10 @@ export default abstract class HW4Level extends Scene {
     /** The player's spawn position */
     protected playerSpawn: Vec2;
 
+    private healthLabel: Label;
+	private healthBar: Label;
+	private healthBarBg: Label;
+
 
     /** The end of level stuff */
 
@@ -119,6 +123,7 @@ export default abstract class HW4Level extends Scene {
         this.initializeViewport();
         this.subscribeToEvents();
         this.initializeUI();
+        
 
         // Initialize the ends of the levels - must be initialized after the primary layer has been added
         this.initializeLevelEnds();
@@ -172,6 +177,10 @@ export default abstract class HW4Level extends Scene {
                 this.handleParticleHit(event.data.get("node"));
                 break;
             }
+            case HW4Events.HEALTH_CHANGE: {
+                this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
+                break;
+            }
             // Default: Throw an error! No unhandled events allowed.
             default: {
                 throw new Error(`Unhandled event caught in scene with type ${event.type}`)
@@ -223,7 +232,6 @@ export default abstract class HW4Level extends Scene {
             }
         }
     }
-
     /**
      * Handle when the player enters the level end area.
      */
@@ -235,6 +243,16 @@ export default abstract class HW4Level extends Scene {
             this.levelEndLabel.tweens.play("slideIn");
         }
     }
+    protected handleHealthChange(currentHealth: number, maxHealth: number): void {
+		let unit = this.healthBarBg.size.x / maxHealth;
+        console.log(`Healthbar background size: ${this.healthBarBg.size}`);
+        console.log(`Unit: ${unit}`);
+        
+		this.healthBar.size.set(this.healthBarBg.size.x - unit * (maxHealth - currentHealth), this.healthBarBg.size.y);
+		this.healthBar.position.set(this.healthBarBg.position.x - (unit / 2 / this.getViewScale()) * (maxHealth - currentHealth), this.healthBarBg.position.y);
+
+		this.healthBar.backgroundColor = currentHealth < maxHealth * 1/4 ? Color.RED: currentHealth < maxHealth * 3/4 ? Color.YELLOW : Color.GREEN;
+	}
 
     /* Initialization methods for everything in the scene */
 
@@ -280,11 +298,28 @@ export default abstract class HW4Level extends Scene {
         this.receiver.subscribe(HW4Events.LEVEL_START);
         this.receiver.subscribe(HW4Events.LEVEL_END);
         this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
+        this.receiver.subscribe(HW4Events.HEALTH_CHANGE);
     }
     /**
      * Adds in any necessary UI to the game
      */
     protected initializeUI(): void {
+
+        // HP Label
+		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(205, 20), text: "HP "});
+		this.healthLabel.size.set(300, 30);
+		this.healthLabel.fontSize = 24;
+		this.healthLabel.font = "Courier";
+
+        // HealthBar
+		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBar.size = new Vec2(300, 25);
+		this.healthBar.backgroundColor = Color.GREEN;
+
+        // HealthBar Border
+		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBarBg.size = new Vec2(300, 25);
+		this.healthBarBg.borderColor = Color.BLACK;
 
         // End of level label (start off screen)
         this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });

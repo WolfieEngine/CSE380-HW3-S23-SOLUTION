@@ -14,6 +14,8 @@ import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
 import { HW4Controls } from "../HW4Controls";
 import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
+import MathUtils from "../../Wolfie2D/Utils/MathUtils";
+import { HW4Events } from "../HW4Events";
 
 /**
  * Animation keys for the player spritesheet
@@ -48,6 +50,9 @@ export default class PlayerController extends StateMachineAI {
     public readonly MAX_SPEED: number = 200;
     public readonly MIN_SPEED: number = 100;
 
+    protected _health: number;
+    protected _maxHealth: number;
+
     protected owner: HW4AnimatedSprite;
 
     protected _velocity: Vec2;
@@ -66,6 +71,9 @@ export default class PlayerController extends StateMachineAI {
         this.tilemap = this.owner.getScene().getTilemap(options.tilemap) as OrthogonalTilemap;
         this.speed = 400;
         this.velocity = Vec2.ZERO;
+
+        this.health = 10
+        this.maxHealth = 10;
 
         // Add the different states the player can be in to the PlayerController 
 		this.addState(PlayerStates.IDLE, new Idle(this, this.owner));
@@ -117,6 +125,17 @@ export default class PlayerController extends StateMachineAI {
 
     public get velocity(): Vec2 { return this._velocity; }
     public set velocity(velocity: Vec2) { this._velocity = velocity; }
+
     public get speed(): number { return this._speed; }
     public set speed(speed: number) { this._speed = speed; }
+
+    public get maxHealth(): number { return this._maxHealth; }
+    public set maxHealth(maxHealth: number) { this._maxHealth = maxHealth; }
+
+    public get health(): number { return this._health; }
+    public set health(health: number) { 
+        this._health = MathUtils.clamp(health, 0, this.maxHealth);
+        console.log(`Updating health ${this.health}`);
+        this.emitter.fireEvent(HW4Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
+    }
 }

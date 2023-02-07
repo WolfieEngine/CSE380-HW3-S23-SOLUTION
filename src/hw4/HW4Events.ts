@@ -11,6 +11,13 @@ export enum HW4Events {
     PLAYER_ENTERED_LEVEL_END = "PLAYER_ENTERED_LEVEL_END",
     PLAYER_KILLED = "PLAYER_KILLED",
 
+    /**
+     * The event that gets emitted when the player's health changes
+     * 
+     * Has data: { curhp: number, maxhp: number }
+     */
+    HEALTH_CHANGE = "HEALTH_CHANGE",
+
     /*
         An event sent by the physics system when a particle from the player's weapon system
         starts to collide with a goose.
