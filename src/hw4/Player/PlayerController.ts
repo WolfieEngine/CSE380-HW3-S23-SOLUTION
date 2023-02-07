@@ -46,13 +46,18 @@ export const PlayerStates = {
     DEAD: "DEAD",
 } as const
 
+/**
+ * The controller that controls the player.
+ */
 export default class PlayerController extends StateMachineAI {
     public readonly MAX_SPEED: number = 200;
     public readonly MIN_SPEED: number = 100;
 
+    /** Health and max health for the player */
     protected _health: number;
     protected _maxHealth: number;
 
+    /** The players game node */
     protected owner: HW4AnimatedSprite;
 
     protected _velocity: Vec2;
@@ -81,6 +86,7 @@ export default class PlayerController extends StateMachineAI {
         this.addState(PlayerStates.JUMP, new Jump(this, this.owner));
         this.addState(PlayerStates.FALL, new Fall(this, this.owner));
         this.addState(PlayerStates.DEAD, new Dead(this, this.owner));
+        
         // Start the player in the Idle state
         this.initialize(PlayerStates.IDLE);
     }
@@ -95,7 +101,7 @@ export default class PlayerController extends StateMachineAI {
 		return direction;
     }
     /** 
-     * Gets the direction of the mouse from the player's position
+     * Gets the direction of the mouse from the player's position as a Vec2
      */
     public get faceDir(): Vec2 { return this.owner.position.dirTo(Input.getGlobalMousePosition()); }
 
@@ -136,10 +142,9 @@ export default class PlayerController extends StateMachineAI {
     public get health(): number { return this._health; }
     public set health(health: number) { 
         this._health = MathUtils.clamp(health, 0, this.maxHealth);
+        // When the health changes, fire an event up to the scene.
         this.emitter.fireEvent(HW4Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
-
-        if (this.health === 0) {
-            this.changeState(PlayerStates.DEAD);
-        }
+        // If the health hit 0, change the state of the player
+        if (this.health === 0) { this.changeState(PlayerStates.DEAD); }
     }
 }
