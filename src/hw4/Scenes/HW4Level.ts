@@ -247,8 +247,6 @@ export default abstract class HW4Level extends Scene {
     }
     protected handleHealthChange(currentHealth: number, maxHealth: number): void {
 		let unit = this.healthBarBg.size.x / maxHealth;
-        console.log(`Healthbar background size: ${this.healthBarBg.size}`);
-        console.log(`Unit: ${unit}`);
         
 		this.healthBar.size.set(this.healthBarBg.size.x - unit * (maxHealth - currentHealth), this.healthBarBg.size.y);
 		this.healthBar.position.set(this.healthBarBg.position.x - (unit / 2 / this.getViewScale()) * (maxHealth - currentHealth), this.healthBarBg.position.y);
