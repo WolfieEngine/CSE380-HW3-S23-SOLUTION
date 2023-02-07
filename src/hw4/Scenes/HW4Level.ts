@@ -171,6 +171,7 @@ export default abstract class HW4Level extends Scene {
             }
             // When the level ends, change the scene to the next level
             case HW4Events.LEVEL_END: {
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
@@ -183,7 +184,8 @@ export default abstract class HW4Level extends Scene {
                 break;
             }
             case HW4Events.PLAYER_DEAD: {
-                this.handlePlayerDead();
+                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
+                this.sceneManager.changeToScene(MainMenu);
                 break;
             }
             // Default: Throw an error! No unhandled events allowed.
@@ -240,7 +242,6 @@ export default abstract class HW4Level extends Scene {
     protected handleEnteredLevelEnd(): void {
         // If the timer hasn't run yet, start the end level animation
         if (!this.levelEndTimer.hasRun() && this.levelEndTimer.isStopped()) {
-            this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
             this.levelEndTimer.start();
             this.levelEndLabel.tweens.play("slideIn");
         }
@@ -253,9 +254,6 @@ export default abstract class HW4Level extends Scene {
 
 		this.healthBar.backgroundColor = currentHealth < maxHealth * 1/4 ? Color.RED: currentHealth < maxHealth * 3/4 ? Color.YELLOW : Color.GREEN;
 	}
-    protected handlePlayerDead(): void {
-        this.sceneManager.changeToScene(MainMenu);
-    }
 
     /* Initialization methods for everything in the scene */
 
