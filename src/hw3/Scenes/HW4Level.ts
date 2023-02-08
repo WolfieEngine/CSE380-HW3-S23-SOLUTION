@@ -20,7 +20,7 @@ import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import PlayerController, { PlayerTweens } from "../Player/PlayerController";
 import PlayerWeapon from "../Player/PlayerWeapon";
 
-import { HW4Events } from "../HW4Events";
+import { HW3Events } from "../HW3Events";
 import { HW3PhysicsGroups } from "../HW3PhysicsGroups";
 import HW4FactoryManager from "../Factory/HW4FactoryManager";
 import MainMenu from "./MainMenu";
@@ -163,30 +163,30 @@ export default abstract class HW4Level extends Scene {
      */
     protected handleEvent(event: GameEvent): void {
         switch (event.type) {
-            case HW4Events.PLAYER_ENTERED_LEVEL_END: {
+            case HW3Events.PLAYER_ENTERED_LEVEL_END: {
                 this.handleEnteredLevelEnd();
                 break;
             }
             // When the level starts, reenable user input
-            case HW4Events.LEVEL_START: {
+            case HW3Events.LEVEL_START: {
                 Input.enableInput();
                 break;
             }
             // When the level ends, change the scene to the next level
-            case HW4Events.LEVEL_END: {
+            case HW3Events.LEVEL_END: {
                 this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
-            case HW4Events.PARTICLE_HIT_DESTRUCTIBLE: {
+            case HW3Events.PARTICLE_HIT_DESTRUCTIBLE: {
                 this.handleParticleHit(event.data.get("node"));
                 break;
             }
-            case HW4Events.HEALTH_CHANGE: {
+            case HW3Events.HEALTH_CHANGE: {
                 this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
                 break;
             }
-            case HW4Events.PLAYER_DEAD: {
+            case HW3Events.PLAYER_DEAD: {
                 this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(MainMenu);
                 break;
@@ -306,18 +306,18 @@ export default abstract class HW4Level extends Scene {
         // Add physics to the destructible layer of the tilemap
         this.destructable.addPhysics();
         this.destructable.setGroup(HW3PhysicsGroups.DESTRUCTABLE);
-        this.destructable.setTrigger(HW3PhysicsGroups.PLAYER_WEAPON, HW4Events.PARTICLE_HIT_DESTRUCTIBLE, null);
+        this.destructable.setTrigger(HW3PhysicsGroups.PLAYER_WEAPON, HW3Events.PARTICLE_HIT_DESTRUCTIBLE, null);
     }
     /**
      * Handles all subscriptions to events
      */
     protected subscribeToEvents(): void {
-        this.receiver.subscribe(HW4Events.PLAYER_ENTERED_LEVEL_END);
-        this.receiver.subscribe(HW4Events.LEVEL_START);
-        this.receiver.subscribe(HW4Events.LEVEL_END);
-        this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
-        this.receiver.subscribe(HW4Events.HEALTH_CHANGE);
-        this.receiver.subscribe(HW4Events.PLAYER_DEAD);
+        this.receiver.subscribe(HW3Events.PLAYER_ENTERED_LEVEL_END);
+        this.receiver.subscribe(HW3Events.LEVEL_START);
+        this.receiver.subscribe(HW3Events.LEVEL_END);
+        this.receiver.subscribe(HW3Events.PARTICLE_HIT_DESTRUCTIBLE);
+        this.receiver.subscribe(HW3Events.HEALTH_CHANGE);
+        this.receiver.subscribe(HW3Events.PLAYER_DEAD);
     }
     /**
      * Adds in any necessary UI to the game
@@ -378,7 +378,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.LEVEL_END
+            onEnd: HW3Events.LEVEL_END
         });
 
         /*
@@ -396,7 +396,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.LEVEL_START
+            onEnd: HW3Events.LEVEL_START
         });
     }
     /**
@@ -458,7 +458,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.PLAYER_DEAD
+            onEnd: HW3Events.PLAYER_DEAD
         });
 
         // Give the player it's AI
@@ -488,7 +488,7 @@ export default abstract class HW4Level extends Scene {
         
         this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
-        this.levelEndArea.setTrigger(HW3PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
+        this.levelEndArea.setTrigger(HW3PhysicsGroups.PLAYER, HW3Events.PLAYER_ENTERED_LEVEL_END, null);
         this.levelEndArea.color = new Color(255, 0, 255, .20);
         
     }
