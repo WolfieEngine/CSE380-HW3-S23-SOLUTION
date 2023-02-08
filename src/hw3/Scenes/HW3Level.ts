@@ -28,7 +28,7 @@ import MainMenu from "./MainMenu";
 /**
  * A const object for the layers in a HW4Level
  */
-export const HW4Layers = {
+export const HW3Layers = {
     // The primary layer in the HW4Scene 
     PRIMARY: "PRIMARY",
     // The UI layer in the HW4Scene
@@ -36,12 +36,12 @@ export const HW4Layers = {
 } as const;
 
 // HW4Layer as a type
-export type HW4Layer = typeof HW4Layers[keyof typeof HW4Layers]
+export type HW3Layer = typeof HW3Layers[keyof typeof HW3Layers]
 
 /**
  * An abstract HW4 scene class.
  */
-export default abstract class HW4Level extends Scene {
+export default abstract class HW3Level extends Scene {
 
     /** Overrride the factory manager */
     public add: HW4FactoryManager;
@@ -279,9 +279,9 @@ export default abstract class HW4Level extends Scene {
      */
     protected initLayers(): void {
         // Add a layer for UI
-        this.addUILayer(HW4Layers.UI);
+        this.addUILayer(HW3Layers.UI);
         // Add a layer for players and enemies
-        this.addLayer(HW4Layers.PRIMARY);
+        this.addLayer(HW3Layers.PRIMARY);
     }
     /**
      * Initializes the tilemap for a HW4 scene.
@@ -325,23 +325,23 @@ export default abstract class HW4Level extends Scene {
     protected initializeUI(): void {
 
         // HP Label
-		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(205, 20), text: "HP "});
+		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(205, 20), text: "HP "});
 		this.healthLabel.size.set(300, 30);
 		this.healthLabel.fontSize = 24;
 		this.healthLabel.font = "Courier";
 
         // HealthBar
-		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(250, 20), text: ""});
 		this.healthBar.size = new Vec2(300, 25);
 		this.healthBar.backgroundColor = Color.GREEN;
 
         // HealthBar Border
-		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(250, 20), text: ""});
 		this.healthBarBg.size = new Vec2(300, 25);
 		this.healthBarBg.borderColor = Color.BLACK;
 
         // End of level label (start off screen)
-        this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
+        this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
         this.levelEndLabel.size.set(1200, 60);
         this.levelEndLabel.borderRadius = 0;
         this.levelEndLabel.backgroundColor = new Color(34, 32, 52);
@@ -363,7 +363,7 @@ export default abstract class HW4Level extends Scene {
             ]
         });
 
-        this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.UI, { position: new Vec2(300, 200), size: new Vec2(600, 400) });
+        this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, HW3Layers.UI, { position: new Vec2(300, 200), size: new Vec2(600, 400) });
         this.levelTransitionScreen.color = new Color(34, 32, 52);
         this.levelTransitionScreen.alpha = 1;
 
@@ -404,7 +404,7 @@ export default abstract class HW4Level extends Scene {
      */
     protected initializeWeaponSystem(): void {
         this.playerWeaponSystem = new PlayerWeapon(50, Vec2.ZERO, 1000, 3, 0, 50);
-        this.playerWeaponSystem.initializePool(this, HW4Layers.PRIMARY);
+        this.playerWeaponSystem.initializePool(this, HW3Layers.PRIMARY);
     }
     /**
      * Initializes the player, setting the player's initial position to the given position.
@@ -419,7 +419,7 @@ export default abstract class HW4Level extends Scene {
         }
 
         // Add the player to the scene
-        this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
+        this.player = this.add.animatedSprite(key, HW3Layers.PRIMARY);
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
@@ -482,11 +482,11 @@ export default abstract class HW4Level extends Scene {
      * Initializes the level end area
      */
     protected initializeLevelEnds(): void {
-        if (!this.layers.has(HW4Layers.PRIMARY)) {
+        if (!this.layers.has(HW3Layers.PRIMARY)) {
             throw new Error("Can't initialize the level ends until the primary layer has been added to the scene!");
         }
         
-        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW3Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
         this.levelEndArea.setTrigger(HW3PhysicsGroups.PLAYER, HW3Events.PLAYER_ENTERED_LEVEL_END, null);
         this.levelEndArea.color = new Color(255, 0, 255, .20);

@@ -1,5 +1,5 @@
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
-import HW4Level from "../Scenes/HW4Level";
+import HW3Level from "../Scenes/HW3Level";
 
 /**
  * An animated sprite in the HW3Level. I have extended the animated sprite to create a more specific sprite
@@ -14,8 +14,8 @@ import HW4Level from "../Scenes/HW4Level";
  */
 export default class HW4AnimatedSprite extends AnimatedSprite {
 
-    protected scene: HW4Level;
+    protected scene: HW3Level;
     
-    public setScene(scene: HW4Level): void { this.scene = scene; }
-    public getScene(): HW4Level { return this.scene; }
+    public setScene(scene: HW3Level): void { this.scene = scene; }
+    public getScene(): HW3Level { return this.scene; }
 }
