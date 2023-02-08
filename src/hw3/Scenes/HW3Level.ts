@@ -20,28 +20,31 @@ import { EaseFunctionType } from "../../Wolfie2D/Utils/EaseFunctions";
 import PlayerController, { PlayerTweens } from "../Player/PlayerController";
 import PlayerWeapon from "../Player/PlayerWeapon";
 
-import { HW4Events } from "../HW4Events";
-import { HW4PhysicsGroups } from "../HW4PhysicsGroups";
-import HW4FactoryManager from "../Factory/HW4FactoryManager";
+import { HW3Events } from "../HW3Events";
+import { HW3PhysicsGroups } from "../HW3PhysicsGroups";
+import HW3FactoryManager from "../Factory/HW3FactoryManager";
 import MainMenu from "./MainMenu";
 
 /**
- * Enums for the layers in a HW4Level
+ * A const object for the layer names
  */
-export const HW4Layers = {
-    // The primary layer in the HW4Scene 
+export const HW3Layers = {
+    // The primary layer
     PRIMARY: "PRIMARY",
-    // The UI layer in the HW4Scene
+    // The UI layer
     UI: "UI"
 } as const;
+
+// The layers as a type
+export type HW3Layer = typeof HW3Layers[keyof typeof HW3Layers]
 
 /**
  * An abstract HW4 scene class.
  */
-export default abstract class HW4Level extends Scene {
+export default abstract class HW3Level extends Scene {
 
     /** Overrride the factory manager */
-    public add: HW4FactoryManager;
+    public add: HW3FactoryManager;
 
 
     /** The particle system used for the player's weapon */
@@ -91,10 +94,10 @@ export default abstract class HW4Level extends Scene {
     public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
         super(viewport, sceneManager, renderingManager, {...options, physics: {
             groupNames: [
-                HW4PhysicsGroups.GROUND, 
-                HW4PhysicsGroups.PLAYER, 
-                HW4PhysicsGroups.PLAYER_WEAPON, 
-                HW4PhysicsGroups.DESTRUCTABLE
+                HW3PhysicsGroups.GROUND, 
+                HW3PhysicsGroups.PLAYER, 
+                HW3PhysicsGroups.PLAYER_WEAPON, 
+                HW3PhysicsGroups.DESTRUCTABLE
             ],
             collisions:
             [
@@ -104,7 +107,7 @@ export default abstract class HW4Level extends Scene {
                 [0, 1, 1, 0],
             ]
         }});
-        this.add = new HW4FactoryManager(this, this.tilemaps);
+        this.add = new HW3FactoryManager(this, this.tilemaps);
     }
 
     public startScene(): void {
@@ -160,30 +163,30 @@ export default abstract class HW4Level extends Scene {
      */
     protected handleEvent(event: GameEvent): void {
         switch (event.type) {
-            case HW4Events.PLAYER_ENTERED_LEVEL_END: {
+            case HW3Events.PLAYER_ENTERED_LEVEL_END: {
                 this.handleEnteredLevelEnd();
                 break;
             }
             // When the level starts, reenable user input
-            case HW4Events.LEVEL_START: {
+            case HW3Events.LEVEL_START: {
                 Input.enableInput();
                 break;
             }
             // When the level ends, change the scene to the next level
-            case HW4Events.LEVEL_END: {
+            case HW3Events.LEVEL_END: {
                 this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
-            case HW4Events.PARTICLE_HIT_DESTRUCTIBLE: {
+            case HW3Events.PARTICLE_HIT_DESTRUCTIBLE: {
                 this.handleParticleHit(event.data.get("node"));
                 break;
             }
-            case HW4Events.HEALTH_CHANGE: {
+            case HW3Events.HEALTH_CHANGE: {
                 this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
                 break;
             }
-            case HW4Events.PLAYER_DEAD: {
+            case HW3Events.PLAYER_DEAD: {
                 this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(MainMenu);
                 break;
@@ -276,12 +279,12 @@ export default abstract class HW4Level extends Scene {
      */
     protected initLayers(): void {
         // Add a layer for UI
-        this.addUILayer(HW4Layers.UI);
+        this.addUILayer(HW3Layers.UI);
         // Add a layer for players and enemies
-        this.addLayer(HW4Layers.PRIMARY);
+        this.addLayer(HW3Layers.PRIMARY);
     }
     /**
-     * Initializes the tilemap for a HW4 scene.
+     * Initializes the tilemaps
      * @param key the key for the tilemap data
      * @param scale the scale factor for the tilemap
      */
@@ -302,19 +305,19 @@ export default abstract class HW4Level extends Scene {
 
         // Add physics to the destructible layer of the tilemap
         this.destructable.addPhysics();
-        this.destructable.setGroup(HW4PhysicsGroups.DESTRUCTABLE);
-        this.destructable.setTrigger(HW4PhysicsGroups.PLAYER_WEAPON, HW4Events.PARTICLE_HIT_DESTRUCTIBLE, null);
+        this.destructable.setGroup(HW3PhysicsGroups.DESTRUCTABLE);
+        this.destructable.setTrigger(HW3PhysicsGroups.PLAYER_WEAPON, HW3Events.PARTICLE_HIT_DESTRUCTIBLE, null);
     }
     /**
      * Handles all subscriptions to events
      */
     protected subscribeToEvents(): void {
-        this.receiver.subscribe(HW4Events.PLAYER_ENTERED_LEVEL_END);
-        this.receiver.subscribe(HW4Events.LEVEL_START);
-        this.receiver.subscribe(HW4Events.LEVEL_END);
-        this.receiver.subscribe(HW4Events.PARTICLE_HIT_DESTRUCTIBLE);
-        this.receiver.subscribe(HW4Events.HEALTH_CHANGE);
-        this.receiver.subscribe(HW4Events.PLAYER_DEAD);
+        this.receiver.subscribe(HW3Events.PLAYER_ENTERED_LEVEL_END);
+        this.receiver.subscribe(HW3Events.LEVEL_START);
+        this.receiver.subscribe(HW3Events.LEVEL_END);
+        this.receiver.subscribe(HW3Events.PARTICLE_HIT_DESTRUCTIBLE);
+        this.receiver.subscribe(HW3Events.HEALTH_CHANGE);
+        this.receiver.subscribe(HW3Events.PLAYER_DEAD);
     }
     /**
      * Adds in any necessary UI to the game
@@ -322,23 +325,23 @@ export default abstract class HW4Level extends Scene {
     protected initializeUI(): void {
 
         // HP Label
-		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(205, 20), text: "HP "});
+		this.healthLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(205, 20), text: "HP "});
 		this.healthLabel.size.set(300, 30);
 		this.healthLabel.fontSize = 24;
 		this.healthLabel.font = "Courier";
 
         // HealthBar
-		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBar = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(250, 20), text: ""});
 		this.healthBar.size = new Vec2(300, 25);
 		this.healthBar.backgroundColor = Color.GREEN;
 
         // HealthBar Border
-		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, {position: new Vec2(250, 20), text: ""});
+		this.healthBarBg = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, {position: new Vec2(250, 20), text: ""});
 		this.healthBarBg.size = new Vec2(300, 25);
 		this.healthBarBg.borderColor = Color.BLACK;
 
         // End of level label (start off screen)
-        this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW4Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
+        this.levelEndLabel = <Label>this.add.uiElement(UIElementType.LABEL, HW3Layers.UI, { position: new Vec2(-300, 100), text: "Level Complete" });
         this.levelEndLabel.size.set(1200, 60);
         this.levelEndLabel.borderRadius = 0;
         this.levelEndLabel.backgroundColor = new Color(34, 32, 52);
@@ -360,7 +363,7 @@ export default abstract class HW4Level extends Scene {
             ]
         });
 
-        this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.UI, { position: new Vec2(300, 200), size: new Vec2(600, 400) });
+        this.levelTransitionScreen = <Rect>this.add.graphic(GraphicType.RECT, HW3Layers.UI, { position: new Vec2(300, 200), size: new Vec2(600, 400) });
         this.levelTransitionScreen.color = new Color(34, 32, 52);
         this.levelTransitionScreen.alpha = 1;
 
@@ -375,7 +378,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.LEVEL_END
+            onEnd: HW3Events.LEVEL_END
         });
 
         /*
@@ -393,7 +396,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.LEVEL_START
+            onEnd: HW3Events.LEVEL_START
         });
     }
     /**
@@ -401,7 +404,7 @@ export default abstract class HW4Level extends Scene {
      */
     protected initializeWeaponSystem(): void {
         this.playerWeaponSystem = new PlayerWeapon(50, Vec2.ZERO, 1000, 3, 0, 50);
-        this.playerWeaponSystem.initializePool(this, HW4Layers.PRIMARY);
+        this.playerWeaponSystem.initializePool(this, HW3Layers.PRIMARY);
     }
     /**
      * Initializes the player, setting the player's initial position to the given position.
@@ -416,13 +419,13 @@ export default abstract class HW4Level extends Scene {
         }
 
         // Add the player to the scene
-        this.player = this.add.animatedSprite(key, HW4Layers.PRIMARY);
+        this.player = this.add.animatedSprite(key, HW3Layers.PRIMARY);
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
         // Give the player physics and setup collision groups and triggers for the player
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
-        this.player.setGroup(HW4PhysicsGroups.PLAYER);
+        this.player.setGroup(HW3PhysicsGroups.PLAYER);
 
         // Give the player a flip animation
         this.player.tweens.add(PlayerTweens.FLIP, {
@@ -455,7 +458,7 @@ export default abstract class HW4Level extends Scene {
                     ease: EaseFunctionType.IN_OUT_QUAD
                 }
             ],
-            onEnd: HW4Events.PLAYER_DEAD
+            onEnd: HW3Events.PLAYER_DEAD
         });
 
         // Give the player it's AI
@@ -479,13 +482,13 @@ export default abstract class HW4Level extends Scene {
      * Initializes the level end area
      */
     protected initializeLevelEnds(): void {
-        if (!this.layers.has(HW4Layers.PRIMARY)) {
+        if (!this.layers.has(HW3Layers.PRIMARY)) {
             throw new Error("Can't initialize the level ends until the primary layer has been added to the scene!");
         }
         
-        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW4Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
+        this.levelEndArea = <Rect>this.add.graphic(GraphicType.RECT, HW3Layers.PRIMARY, { position: this.levelEndPosition, size: this.levelEndHalfSize });
         this.levelEndArea.addPhysics(undefined, undefined, false, true);
-        this.levelEndArea.setTrigger(HW4PhysicsGroups.PLAYER, HW4Events.PLAYER_ENTERED_LEVEL_END, null);
+        this.levelEndArea.setTrigger(HW3PhysicsGroups.PLAYER, HW3Events.PLAYER_ENTERED_LEVEL_END, null);
         this.levelEndArea.color = new Color(255, 0, 255, .20);
         
     }
