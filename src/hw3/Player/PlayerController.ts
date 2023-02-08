@@ -1,6 +1,5 @@
 import StateMachineAI from "../../Wolfie2D/AI/StateMachineAI";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 
 import Fall from "./PlayerStates/Fall";
@@ -10,12 +9,11 @@ import Walk from "./PlayerStates/Walk";
 
 import PlayerWeapon from "./PlayerWeapon";
 import Input from "../../Wolfie2D/Input/Input";
-import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
-import { HW4Controls } from "../HW4Controls";
-import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
+import { HW3Controls } from "../HW3Controls";
+import HW3AnimatedSprite from "../Nodes/HW3AnimatedSprite";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
-import { HW4Events } from "../HW4Events";
+import { HW3Events } from "../HW3Events";
 import Dead from "./PlayerStates/Dead";
 
 /**
@@ -58,7 +56,7 @@ export default class PlayerController extends StateMachineAI {
     protected _maxHealth: number;
 
     /** The players game node */
-    protected owner: HW4AnimatedSprite;
+    protected owner: HW3AnimatedSprite;
 
     protected _velocity: Vec2;
 	protected _speed: number;
@@ -68,7 +66,7 @@ export default class PlayerController extends StateMachineAI {
     protected weapon: PlayerWeapon;
 
     
-    public initializeAI(owner: HW4AnimatedSprite, options: Record<string, any>){
+    public initializeAI(owner: HW3AnimatedSprite, options: Record<string, any>){
         this.owner = owner;
 
         this.weapon = options.weaponSystem;
@@ -96,8 +94,8 @@ export default class PlayerController extends StateMachineAI {
 	 */
     public get inputDir(): Vec2 {
         let direction = Vec2.ZERO;
-		direction.x = (Input.isPressed(HW4Controls.MOVE_LEFT) ? -1 : 0) + (Input.isPressed(HW4Controls.MOVE_RIGHT) ? 1 : 0);
-		direction.y = (Input.isJustPressed(HW4Controls.JUMP) ? -1 : 0);
+		direction.x = (Input.isPressed(HW3Controls.MOVE_LEFT) ? -1 : 0) + (Input.isPressed(HW3Controls.MOVE_RIGHT) ? 1 : 0);
+		direction.y = (Input.isJustPressed(HW3Controls.JUMP) ? -1 : 0);
 		return direction;
     }
     /** 
@@ -109,7 +107,9 @@ export default class PlayerController extends StateMachineAI {
 		super.update(deltaT);
 
         // If the player hits the attack button and the weapon system isn't running, restart the system and fire!
-        if (Input.isPressed(HW4Controls.ATTACK) && !this.weapon.isSystemRunning()) {
+        if (Input.isPressed(HW3Controls.ATTACK) && !this.weapon.isSystemRunning()) {
+            // Update the rotation to apply the particles velocity vector
+            this.weapon.rotation = 2*Math.PI - Vec2.UP.angleToCCW(this.faceDir) + Math.PI;
             // Start the particle system at the player's current position
             this.weapon.startSystem(500, 0, this.owner.position);
         }
@@ -138,7 +138,7 @@ export default class PlayerController extends StateMachineAI {
     public set health(health: number) { 
         this._health = MathUtils.clamp(health, 0, this.maxHealth);
         // When the health changes, fire an event up to the scene.
-        this.emitter.fireEvent(HW4Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
+        this.emitter.fireEvent(HW3Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
         // If the health hit 0, change the state of the player
         if (this.health === 0) { this.changeState(PlayerStates.DEAD); }
     }

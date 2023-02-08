@@ -1,22 +1,24 @@
 import AABB from "../../Wolfie2D/DataTypes/Shapes/AABB";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import HW4Level from "./HW4Level";
+import HW3Level from "./HW3Level";
+import MainMenu from "./MainMenu";
+
+import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
 import RenderingManager from "../../Wolfie2D/Rendering/RenderingManager";
 import SceneManager from "../../Wolfie2D/Scene/SceneManager";
-import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
-import HW4Level2 from "./HW4Level2";
+import Level1 from "./HW3Level1";
 
 /**
- * The first level for HW4 - should be the one with the grass and the clouds.
+ * The second level for HW4. It should be the goose dungeon / cave.
  */
-export default class Level1 extends HW4Level {
+export default class Level2 extends HW3Level {
 
     public static readonly PLAYER_SPAWN = new Vec2(32, 32);
     public static readonly PLAYER_SPRITE_KEY = "PLAYER_SPRITE_KEY";
     public static readonly PLAYER_SPRITE_PATH = "hw4_assets/spritesheets/Peter.json";
 
-    public static readonly TILEMAP_KEY = "LEVEL1";
-    public static readonly TILEMAP_PATH = "hw4_assets/tilemaps/HW4Level1.json";
+    public static readonly TILEMAP_KEY = "LEVEL2";
+    public static readonly TILEMAP_PATH = "hw4_assets/tilemaps/HW4Level2.json";
     public static readonly TILEMAP_SCALE = new Vec2(2, 2);
     public static readonly DESTRUCTIBLE_LAYER_KEY = "Destructable";
     public static readonly WALLS_LAYER_KEY = "Main";
@@ -36,15 +38,15 @@ export default class Level1 extends HW4Level {
         super(viewport, sceneManager, renderingManager, options);
 
         // Set the keys for the different layers of the tilemap
-        this.tilemapKey = Level1.TILEMAP_KEY;
-        this.tilemapScale = Level1.TILEMAP_SCALE;
-        this.destructibleLayerKey = Level1.DESTRUCTIBLE_LAYER_KEY;
-        this.wallsLayerKey = Level1.WALLS_LAYER_KEY;
+        this.tilemapKey = Level2.TILEMAP_KEY;
+        this.tilemapScale = Level2.TILEMAP_SCALE;
+        this.destructibleLayerKey = Level2.DESTRUCTIBLE_LAYER_KEY;
+        this.wallsLayerKey = Level2.WALLS_LAYER_KEY;
 
         // Set the key for the player's sprite
         this.playerSpriteKey = Level1.PLAYER_SPRITE_KEY;
         // Set the player's spawn
-        this.playerSpawn = Level1.PLAYER_SPAWN;
+        this.playerSpawn = Level2.PLAYER_SPAWN;
 
         // Music and sound
         this.levelMusicKey = Level1.LEVEL_MUSIC_KEY
@@ -54,47 +56,19 @@ export default class Level1 extends HW4Level {
         // Level end size and position
         this.levelEndPosition = new Vec2(32, 216).mult(this.tilemapScale);
         this.levelEndHalfSize = new Vec2(32, 32).mult(this.tilemapScale);
-    }
 
+    }
     /**
-     * Load in our resources for level 1
+     * Load in resources for level 2.
      */
     public loadScene(): void {
         // Load in the tilemap
-        this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
-        // Load in the player's sprite
-        this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
-        // Audio and music
-        this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
-        this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
-        this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
-    }
-
-    /**
-     * Unload resources for level 1 - decide what to keep
-     */
-    public unload(): void {
-        this.load.keepSpritesheet(this.playerSpriteKey);
-        this.load.keepAudio(this.levelMusicKey);
-        this.load.keepAudio(this.jumpAudioKey);
-        this.load.keepAudio(this.tileDestroyedAudioKey);
+        this.load.tilemap(this.tilemapKey, Level2.TILEMAP_PATH);
     }
 
     public startScene(): void {
         super.startScene();
-        // Set the next level to be Level2
-        this.nextLevel = HW4Level2;
-    }
-
-    /**
-     * I had to override this method to adjust the viewport for the first level. I screwed up 
-     * when I was making the tilemap for the first level is what it boils down to.
-     * 
-     * - Peter
-     */
-    protected initializeViewport(): void {
-        super.initializeViewport();
-        this.viewport.setBounds(16, 16, 496, 512);
+        this.nextLevel = MainMenu;
     }
 
 }
