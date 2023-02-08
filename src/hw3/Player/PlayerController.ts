@@ -12,7 +12,7 @@ import PlayerWeapon from "./PlayerWeapon";
 import Input from "../../Wolfie2D/Input/Input";
 import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
-import { HW4Controls } from "../HW4Controls";
+import { HW3Controls } from "../HW3Controls";
 import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 import { HW4Events } from "../HW4Events";
@@ -96,8 +96,8 @@ export default class PlayerController extends StateMachineAI {
 	 */
     public get inputDir(): Vec2 {
         let direction = Vec2.ZERO;
-		direction.x = (Input.isPressed(HW4Controls.MOVE_LEFT) ? -1 : 0) + (Input.isPressed(HW4Controls.MOVE_RIGHT) ? 1 : 0);
-		direction.y = (Input.isJustPressed(HW4Controls.JUMP) ? -1 : 0);
+		direction.x = (Input.isPressed(HW3Controls.MOVE_LEFT) ? -1 : 0) + (Input.isPressed(HW3Controls.MOVE_RIGHT) ? 1 : 0);
+		direction.y = (Input.isJustPressed(HW3Controls.JUMP) ? -1 : 0);
 		return direction;
     }
     /** 
@@ -112,7 +112,7 @@ export default class PlayerController extends StateMachineAI {
         this.weapon.rotation = 2*Math.PI - Vec2.UP.angleToCCW(this.faceDir) + Math.PI;
 
         // If the player hits the attack button and the weapon system isn't running, restart the system and fire!
-        if (Input.isPressed(HW4Controls.ATTACK) && !this.weapon.isSystemRunning()) {
+        if (Input.isPressed(HW3Controls.ATTACK) && !this.weapon.isSystemRunning()) {
             // Update the rotation to apply the particles velocity vector
             this.weapon.rotation = 2*Math.PI - Vec2.UP.angleToCCW(this.faceDir) + Math.PI;
             // Start the particle system at the player's current position
