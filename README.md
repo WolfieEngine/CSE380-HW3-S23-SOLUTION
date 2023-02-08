@@ -1,6 +1,10 @@
 # Homework 3 - CSE 380 - Spring 2023
-- Peter Walsh - peter.t.walsh@stonybrook.edu
 - Professor Richard McKenna - richard@cs.stonybrook.edu
+- Joe Weaver - hweaver@cs.stonybrook.edu
+- Zachary Grandison - zgrandison@cs.stonybrook.edu
+- Peter Walsh - peter.t.walsh@stonybrook.edu
+- Kevin Cai - kevin.cai@stonybrook.edu
+- Andrew Ojeda - atojeda@cs.stonybrook.edu
 ### Due Date: Friday, March 3, 2023
 
 ## Introduction
@@ -8,7 +12,6 @@
 
 In this assignment, you will make a simple platformer game using the Typescript programming language and the Wolfie2D game engine. By completing this assignment, you should start to become familiar with the Wolfie2D game engine and develop an understanding of:
 
-* How to load tilemaps and tilesets into Wolfie2D
 * How to work with Wolfie2Ds physics system
   * Adding physics to game nodes
   * Creating collision groups and triggers
