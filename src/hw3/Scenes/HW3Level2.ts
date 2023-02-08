@@ -6,7 +6,7 @@ import MainMenu from "./MainMenu";
 import Viewport from "../../Wolfie2D/SceneGraph/Viewport";
 import RenderingManager from "../../Wolfie2D/Rendering/RenderingManager";
 import SceneManager from "../../Wolfie2D/Scene/SceneManager";
-import Level1 from "./HW4Level1";
+import Level1 from "./HW3Level1";
 
 /**
  * The second level for HW4. It should be the goose dungeon / cave.

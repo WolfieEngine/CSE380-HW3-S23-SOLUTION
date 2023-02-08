@@ -26,16 +26,16 @@ import HW4FactoryManager from "../Factory/HW4FactoryManager";
 import MainMenu from "./MainMenu";
 
 /**
- * A const object for the layers in a HW4Level
+ * A const object for the layer names
  */
 export const HW3Layers = {
-    // The primary layer in the HW4Scene 
+    // The primary layer
     PRIMARY: "PRIMARY",
-    // The UI layer in the HW4Scene
+    // The UI layer
     UI: "UI"
 } as const;
 
-// HW4Layer as a type
+// The layers as a type
 export type HW3Layer = typeof HW3Layers[keyof typeof HW3Layers]
 
 /**
@@ -284,7 +284,7 @@ export default abstract class HW3Level extends Scene {
         this.addLayer(HW3Layers.PRIMARY);
     }
     /**
-     * Initializes the tilemap for a HW4 scene.
+     * Initializes the tilemaps
      * @param key the key for the tilemap data
      * @param scale the scale factor for the tilemap
      */
