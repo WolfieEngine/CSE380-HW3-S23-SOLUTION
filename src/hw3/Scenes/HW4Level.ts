@@ -26,7 +26,7 @@ import HW4FactoryManager from "../Factory/HW4FactoryManager";
 import MainMenu from "./MainMenu";
 
 /**
- * Enums for the layers in a HW4Level
+ * A const object for the layers in a HW4Level
  */
 export const HW4Layers = {
     // The primary layer in the HW4Scene 
@@ -34,6 +34,9 @@ export const HW4Layers = {
     // The UI layer in the HW4Scene
     UI: "UI"
 } as const;
+
+// HW4Layer as a type
+export type HW4Layer = typeof HW4Layers[keyof typeof HW4Layers]
 
 /**
  * An abstract HW4 scene class.

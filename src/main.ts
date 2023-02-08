@@ -4,8 +4,6 @@ import { HW4Controls } from "./hw4/HW4Controls";
 
 // The main function is your entrypoint into Wolfie2D. Specify your first scene and any options here.
 (function main(){
-    // Run any tests
-    runTests();
 
     // Set up options for our game
     let options = {
@@ -27,5 +25,3 @@ import { HW4Controls } from "./hw4/HW4Controls";
     // Start our game
     game.start(MainMenu, {});
 })();
-
-function runTests(){};

@@ -1,5 +1,4 @@
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import { GameEventType } from "../../Wolfie2D/Events/GameEventType";
 import Button from "../../Wolfie2D/Nodes/UIElements/Button";
 import { UIElementType } from "../../Wolfie2D/Nodes/UIElements/UIElementTypes";
 import Scene from "../../Wolfie2D/Scene/Scene";
@@ -8,15 +7,18 @@ import Level1 from "./HW4Level1";
 
 
 // Layers for the main menu scene
-export enum MenuLayers {
-    MAIN = "MAIN"
-}
+export const MenuLayers = {
+    MAIN: "MAIN"
+} as const;
 
 export default class MainMenu extends Scene {
 
+    public static readonly MUSIC_KEY = "MAIN_MENU_MUSIC";
+    public static readonly MUSIC_PATH = "hw4_assets/music/menu.mp3";
+
     public loadScene(): void {
         // Load the menu song
-        // this.load.audio(HW4Sounds.MENU_MUSIC_KEY, HW4Sounds.MENU_MUSIC_PATH);
+        this.load.audio(MainMenu.MUSIC_KEY, MainMenu.MUSIC_PATH);
     }
 
     public startScene(): void {
