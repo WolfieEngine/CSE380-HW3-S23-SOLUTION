@@ -144,7 +144,44 @@ type TriggerEventData = {
 ```
 
 ## Part 3 - Particle Systems
-In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The `PlayerWeapon` extends the base `ParticeSystem` class, sprinkling in some extra bits of functionality, turning the particle system into a weapon.
+In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
+
+```typescript
+/**
+ * The particle system used for the player's weapon
+ */
+export default class PlayerWeapon extends ParticleSystem {
+
+    /**
+     * @returns true if the particle system is running; false otherwise.
+     */
+    public isSystemRunning(): boolean { return this.systemRunning; }
+
+    /**
+     * Sets the animations for a particle in the player's weapon
+     * @param particle the particle to give the animation to
+     */
+    public setParticleAnimation(particle: Particle) {
+        // Implementation not shown
+    }
+
+}
+```
+For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. 
+> Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
+
+### Part 3.1 - Rotating the particles
+Currently, the particle effect triggered by the player's attack always fires to the right, similar to the image shown below.
+
+<p align="center">
+<img width="696" alt="Screen Shot 2023-02-08 at 12 06 13 AM" src="https://user-images.githubusercontent.com/63989572/217439115-ff5e8761-139c-4cbc-b6ba-2037025a5b33.png">
+</p>
+
+You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should not follow the mouse around the screen.
+
+<p align="center">
+<img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
+</p>
 
 ## Part 4 - Tweening
 Creating and playing tweens in Wolfie2D. Probably the flip and level end slide in animation.
