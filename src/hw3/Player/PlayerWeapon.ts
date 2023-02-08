@@ -15,11 +15,6 @@ export default class PlayerWeapon extends ParticleSystem {
      * @returns true if the particle system is running; false otherwise.
      */
     public isSystemRunning(): boolean { return this.systemRunning; }
-    /**
-     * 
-     * @returns the particles in the pool of particles used in this particles system
-     */
-    public getPool(): Array<Particle> { return this.particlePool; }
 
     /**
      * Sets the animations for a particle in the player's weapon
@@ -43,23 +38,6 @@ export default class PlayerWeapon extends ParticleSystem {
                 }
             ]
         });
-    }
-
-    /**
-     * Initializes this particle system in the given scene and layer
-     * 
-     * All particles in the particle system should have their physics group set to 
-     * the HW4PhysicsGroup.PLAYER_WEAPON.
-     * 
-     * @param scene the scene
-     * @param layer the layer in the scene
-     */
-    public initializePool(scene: Scene, layer: string) {
-        super.initializePool(scene, layer);
-        for (let i = 0; i < this.particlePool.length; i++) {
-            // Set particle physics group to the player's weapon
-            this.particlePool[i].setGroup(HW3PhysicsGroups.PLAYER_WEAPON);
-        }
     }
 
 }

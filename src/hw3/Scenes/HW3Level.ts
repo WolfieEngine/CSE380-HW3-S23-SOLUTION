@@ -205,46 +205,7 @@ export default abstract class HW3Level extends Scene {
      * @param particleId the id of the particle
      */
     protected handleParticleHit(particleId: number): void {
-        let particles = this.playerWeaponSystem.getPool();
 
-        let particle = particles.find(particle => particle.id === particleId);
-        if (particle !== undefined) {
-            // Get the destructable tilemap
-            let tilemap = this.destructable;
-
-            let min = new Vec2(particle.sweptRect.left, particle.sweptRect.top);
-            let max = new Vec2(particle.sweptRect.right, particle.sweptRect.bottom);
-
-            // Convert the min/max x/y to the min and max row/col in the tilemap array
-            let minIndex = tilemap.getColRowAt(min);
-            let maxIndex = tilemap.getColRowAt(max);
-
-            let tileSize = tilemap.getTileSize();
-
-            // Loop over all possible tiles the particle could be colliding with 
-            for(let col = minIndex.x; col <= maxIndex.x; col++){
-                for(let row = minIndex.y; row <= maxIndex.y; row++){
-
-                    // If the tile is collideable -> check if this particle is colliding with the tile
-                    if(tilemap.isTileCollidable(col, row)){
-
-                        // Get the position of this tile
-                        let tilePos = new Vec2(col * tileSize.x + tileSize.x/2, row * tileSize.y + tileSize.y/2);
-                        // Create a new collider for this tile
-                        let collider = new AABB(tilePos, tileSize.scaled(1/2));
-
-                        // Calculate collision area between the node and the tile
-                        let area = particle.sweptRect.overlapArea(collider);
-                        if(area > 0){
-                            // We had a collision - delete the tile in the tilemap
-                            tilemap.setTileAtRowCol(new Vec2(col, row), 0);
-                            // Play a sound when we destroy the tile
-                            this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.tileDestroyedAudioKey, loop: false, holdReference: false });
-                        }
-                    }
-                }
-            }
-        }
     }
     /**
      * Handle the event when the player enters the level end area.
