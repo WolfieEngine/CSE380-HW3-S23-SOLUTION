@@ -1,6 +1,5 @@
 import StateMachineAI from "../../Wolfie2D/AI/StateMachineAI";
 import Vec2 from "../../Wolfie2D/DataTypes/Vec2";
-import Sprite from "../../Wolfie2D/Nodes/Sprites/Sprite";
 import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 
 import Fall from "./PlayerStates/Fall";
@@ -10,10 +9,9 @@ import Walk from "./PlayerStates/Walk";
 
 import PlayerWeapon from "./PlayerWeapon";
 import Input from "../../Wolfie2D/Input/Input";
-import AnimatedSprite from "../../Wolfie2D/Nodes/Sprites/AnimatedSprite";
 
 import { HW3Controls } from "../HW3Controls";
-import HW4AnimatedSprite from "../Nodes/HW4AnimatedSprite";
+import HW3AnimatedSprite from "../Nodes/HW3AnimatedSprite";
 import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 import { HW3Events } from "../HW3Events";
 import Dead from "./PlayerStates/Dead";
@@ -58,7 +56,7 @@ export default class PlayerController extends StateMachineAI {
     protected _maxHealth: number;
 
     /** The players game node */
-    protected owner: HW4AnimatedSprite;
+    protected owner: HW3AnimatedSprite;
 
     protected _velocity: Vec2;
 	protected _speed: number;
@@ -68,7 +66,7 @@ export default class PlayerController extends StateMachineAI {
     protected weapon: PlayerWeapon;
 
     
-    public initializeAI(owner: HW4AnimatedSprite, options: Record<string, any>){
+    public initializeAI(owner: HW3AnimatedSprite, options: Record<string, any>){
         this.owner = owner;
 
         this.weapon = options.weaponSystem;

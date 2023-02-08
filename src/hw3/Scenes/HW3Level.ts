@@ -22,7 +22,7 @@ import PlayerWeapon from "../Player/PlayerWeapon";
 
 import { HW3Events } from "../HW3Events";
 import { HW3PhysicsGroups } from "../HW3PhysicsGroups";
-import HW4FactoryManager from "../Factory/HW4FactoryManager";
+import HW3FactoryManager from "../Factory/HW3FactoryManager";
 import MainMenu from "./MainMenu";
 
 /**
@@ -44,7 +44,7 @@ export type HW3Layer = typeof HW3Layers[keyof typeof HW3Layers]
 export default abstract class HW3Level extends Scene {
 
     /** Overrride the factory manager */
-    public add: HW4FactoryManager;
+    public add: HW3FactoryManager;
 
 
     /** The particle system used for the player's weapon */
@@ -107,7 +107,7 @@ export default abstract class HW3Level extends Scene {
                 [0, 1, 1, 0],
             ]
         }});
-        this.add = new HW4FactoryManager(this, this.tilemaps);
+        this.add = new HW3FactoryManager(this, this.tilemaps);
     }
 
     public startScene(): void {

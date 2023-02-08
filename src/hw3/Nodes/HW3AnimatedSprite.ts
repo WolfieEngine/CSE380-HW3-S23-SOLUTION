@@ -6,13 +6,13 @@ import HW3Level from "../Scenes/HW3Level";
  * with a reference to a HW3Level. One of the things I want to try and show all of you is how to extend
  * Wolfie2d. 
  * 
- * For the HW4AnimatedSprite, I've just overriden the type of the scene and the associated getter/setter
- * methods. Without this, you would have to explicitly cast the type of the scene to a HW4Level to get access
- * to the methods associated with HW4Level. 
+ * For the HW3AnimatedSprite, I've just overriden the type of the scene and the associated getter/setter
+ * methods. Without this, you would have to explicitly cast the type of the scene to a HW3Level to get access
+ * to the methods associated with HW3Level. 
  * 
  * - Peter
  */
-export default class HW4AnimatedSprite extends AnimatedSprite {
+export default class HW3AnimatedSprite extends AnimatedSprite {
 
     protected scene: HW3Level;
     
