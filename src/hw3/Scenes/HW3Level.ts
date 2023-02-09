@@ -101,10 +101,10 @@ export default abstract class HW3Level extends Scene {
             ],
             collisions:
             [
-                [0, 1, 1, 0],
-                [1, 0, 0, 1],
-                [1, 0, 0, 1],
-                [0, 1, 1, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
             ]
         }});
         this.add = new HW3FactoryManager(this, this.tilemaps);
@@ -174,7 +174,6 @@ export default abstract class HW3Level extends Scene {
             }
             // When the level ends, change the scene to the next level
             case HW3Events.LEVEL_END: {
-                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
@@ -187,7 +186,6 @@ export default abstract class HW3Level extends Scene {
                 break;
             }
             case HW3Events.PLAYER_DEAD: {
-                this.emitter.fireEvent(GameEventType.STOP_SOUND, {key: this.levelMusicKey});
                 this.sceneManager.changeToScene(MainMenu);
                 break;
             }
@@ -264,10 +262,10 @@ export default abstract class HW3Level extends Scene {
         this.walls = this.getTilemap(this.wallsLayerKey) as OrthogonalTilemap;
         this.destructable = this.getTilemap(this.destructibleLayerKey) as OrthogonalTilemap;
 
+        // Add physicss to the wall layer
+        this.walls.addPhysics();
         // Add physics to the destructible layer of the tilemap
         this.destructable.addPhysics();
-        this.destructable.setGroup(HW3PhysicsGroups.DESTRUCTABLE);
-        this.destructable.setTrigger(HW3PhysicsGroups.PLAYER_WEAPON, HW3Events.PARTICLE_HIT_DESTRUCTIBLE, null);
     }
     /**
      * Handles all subscriptions to events
@@ -384,9 +382,8 @@ export default abstract class HW3Level extends Scene {
         this.player.scale.set(1, 1);
         this.player.position.copy(this.playerSpawn);
         
-        // Give the player physics and setup collision groups and triggers for the player
+        // Give the player physics
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
-        this.player.setGroup(HW3PhysicsGroups.PLAYER);
 
         // Give the player a flip animation
         this.player.tweens.add(PlayerTweens.FLIP, {
