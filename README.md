@@ -8,7 +8,7 @@
 ### Due Date: Friday, March 3, 2023
 
 ## Introduction
-> First of all, massive shoutout to my friend Andrew Ojeda for making the :fire: level music for this assignment :heart_eyes:. The pacing of the gameplay doesn't quite match the music yet, but I'm going to fix that hopefully soon.
+> Massive shoutout to my friend Andrew Ojeda for making the :fire: level music for this assignment :heart_eyes:
 
 In this assignment, you will make a simple platformer game using the Typescript programming language and the Wolfie2D game engine. By completing this assignment, you should start to become familiar with the Wolfie2D game engine and develop an understanding of:
 
