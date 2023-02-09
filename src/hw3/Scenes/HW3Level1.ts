@@ -52,7 +52,7 @@ export default class Level1 extends HW3Level {
         this.tileDestroyedAudioKey = Level1.TILE_DESTROYED_KEY;
 
         // Level end size and position
-        this.levelEndPosition = new Vec2(32, 216).mult(this.tilemapScale);
+        this.levelEndPosition = new Vec2(128, 232).mult(this.tilemapScale);
         this.levelEndHalfSize = new Vec2(32, 32).mult(this.tilemapScale);
     }
 
@@ -68,16 +68,6 @@ export default class Level1 extends HW3Level {
         this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
         this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
         this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
-    }
-
-    /**
-     * Unload resources for level 1 - decide what to keep
-     */
-    public unload(): void {
-        this.load.keepSpritesheet(this.playerSpriteKey);
-        this.load.keepAudio(this.levelMusicKey);
-        this.load.keepAudio(this.jumpAudioKey);
-        this.load.keepAudio(this.tileDestroyedAudioKey);
     }
 
     public startScene(): void {
