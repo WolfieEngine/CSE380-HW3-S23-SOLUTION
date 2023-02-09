@@ -75,7 +75,6 @@ The directory structure of the homework codebase looks similar to the tree diagr
 ```
 
 ## Codebase Structure
-The homework code for this assignment is structured a bit differently than the code in the previous assignment.
 
 ### Multiple Levels
 Instead of a single, custom scene class, we've defined an abstact class called `HW3Level` extending the base Scene class with two subclasses; `HW3Level1` and `HW3Level2`. The heirarchy is shown roughly in the diagram below. I have omitted the methods and fields from the diagram for the sake of keeping things simple.
@@ -128,8 +127,37 @@ stateDiagram
     Dead --> [*]
 ```
 
-## Part 1 - Playing Sound Effects
-For this assignment, you'll have use Wolfie2d's audio system to play your custom sound effects and level music. Interfacing with Wolfie2d's sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
+
+## Part 1 - Animated Sprites
+For this assignment, you'll need to load in the custom hero animated sprite you made for homework 1. To do this, you'll need to change the sprite loaded in via the `loadScene()` method of the Level1 and Level2 scenes.
+
+I have defined a const object with keys for my heros sprite in the `PlayerController.ts` file. You'll most likely want to change these keys to match up with the animation keys associated with your hero sprites.
+
+```typescript
+/**
+ * Animation keys for the player spritesheet
+ */
+export const PlayerAnimations = {
+    IDLE: "IDLE",
+    WALK: "WALK",
+    JUMP: "JUMP",
+} as const
+```
+
+Once you've got your animated sprite loaded in and setup, you'll need to play your sprites animations appropriately. 
+
+- While the hero is not moving (idling), your sprite should play it's `IDLE` animation
+- When the hero takes damage from falling, your sprite should play it's `TAKING_DAMAGE` animation
+- While the hero is moving to the left, your sprite should play it's `RUN_LEFT` animation if it's not already playing
+- While the hero is moving to the right, your sprite should play it's `RUN_RIGHT` animation if it's not already playing
+- When the hero attacks, the hero should play an attack animation:
+  - If the hero is facing to the right, your sprite should play it's `ATTACKING_RIGHT` animation.
+  - If the hero is facing to the left, your sprite should play it's `ATTACKING_LEFT` animation.
+- When the hero's health hits zero, your sprite should play it's `DYING` animation if it's not already playing
+- After the hero's death animation has played, your sprite should play it's `DEATH` animation.
+
+## Part 2 - Playing Sound Effects
+In this assignment, you should create a custom jump sound effect for your player/hero sprite and some custom level music for the second level, `HW3Level2`. You'll have to use Wolfie2d's audio system to play these custom sound effects and level music. Interfacing with Wolfie2d's sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
 ```typescript
 enum GameEventType {
 
@@ -167,16 +195,15 @@ enum GameEventType {
 ```
 For the most part you only have to worry about using the `PLAY_SOUND` and `STOP_SOUND` events.
 
-### Part 1.1 - Playing Sound Effects
-For this assignment, there are a few sound effects that should be played in response to different game events.
+### Part 2.1 - Playing Sound Effects
+For this assignment, you should play your custom jump sound effect when the player enters the `Jump` state. The player's `Jump` state is defined in the `Jump.ts` file and is one of the states in the player controllers state machine.
 
-- The player entering the `Jump` state, should trigger a jump sound effect
-- A particle colliding with the destructible layer of the tilemap should trigger a sound effect
+### Part 2.2 - Playing Level Music
+When the game transitions to the second level, you should play your custom level music in place of Andrew's :fire: level music. 
 
-### Part 1.2 - Level 2 Music
-When the game transitions to the second level, you should notice the music
+Additionally, you should notice that the level music from level 1 keeps playing when level 2 starts, creating some rather unpleasant level music. Make sure the level music stops playing when we transition between scenes. 
 
-## Part 2 - Physics
+## Part 3 - Physics
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
 ```typescript
 interface Physical {
@@ -193,7 +220,7 @@ Moving a game node by updating it's position field is the equivalent of "telepor
 
 > A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
 
-## Part 2.1 - Adding Physics to GameNodes
+## Part 3.1 - Adding Physics to GameNodes
 For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
 
 - The player's sprite
@@ -213,21 +240,33 @@ In Wolfie2D, if you want to add a physics component to your game node, you can c
 addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean, isStatic?: boolean): void;
 ```
 
-## Part 2.2 - Creating Physics Groups and Triggers
-For this homework assignment, you'll have to configure the physics groups and collision map for the scene. There are four collision groups that need to be accounted for:
+## Part 3.2 - Creating Physics Groups and Triggers
+For this homework assignment, you'll have to configure the physics groups and collision map for the scene. In this assignment there are four physics groups that need to be accounted for:
+
 1. Ground: the group for thhe indestructible layer of the tilemap
 2. Player: the group for the player
 3. Weapon: the group for the particles in the player's weapon system
 4. Destructible: the group for destructible layer of the tilemap
 
-The collision map for the five groups should resemble the table shown below:
+The four collision groups are defined in the `HW3PhysicsGroups.ts` file shown below:
 
-|              | Ground | Player | Weapon | Destructible |
-|--------------|--------|--------|--------|--------------|
-| Ground       | No     | Yes    | Yes    | No           | 
-| Player       | Yes    | No     | No     | Yes          |
-| Weapon       | Yes    | No     | No     | Yes          | 
-| Destructible | No     | Yes    | Yes    | No           | 
+```typescript
+/**
+ * An enum with all of the physics groups for HW4
+ */
+export const HW3PhysicsGroups = {
+    // Physics groups for the player and the player's weapon
+    PLAYER: "PLAYER",
+    PLAYER_WEAPON: "WEAPON",
+    /* 
+        Physics groups for the different tilemap layers. Physics groups for tilemaps are
+        embedded in the tilemap layer data by a property called "Group". This lets you
+        set the physics group for a particular tilemap layer.
+    */
+    GROUND: "GROUND",
+    DESTRUCTABLE: "DESTRUCTABLE"
+} as const;
+```
 
 Currently, the way you have to configure physics groups and triggers is by passing in physics groups is through the scene options that get passed to the scene constructor. 
 ```typescript
@@ -251,9 +290,21 @@ type PhysicOptions = {
   
 }
 ```
-Each group in `groupNames` will get a row/column in the collision map. 
+Each group in `groupNames` will get a row/column in the collision map. The collisions array is a bitmap (an array of 0s and 1s).
 
-## Part 2.3 - Assigning Physics Groups and Triggers
+- A 0 indicates that the two groups should not collide with each other
+- A 1 indicates that the two groups should collide with each other
+
+The collision map for the four groups should resemble the table shown below:
+
+|              | Ground | Player | Weapon | Destructible |
+|--------------|--------|--------|--------|--------------|
+| Ground       | No     | Yes    | Yes    | No           | 
+| Player       | Yes    | No     | No     | Yes          |
+| Weapon       | Yes    | No     | No     | Yes          | 
+| Destructible | No     | Yes    | Yes    | No           | 
+
+## Part 3.3 - Assigning Physics Groups and Triggers
 For this assignment you'll need to assign different types of game nodes to different collision groups.
 
 * The player should be assigned to the Player physics group
@@ -300,7 +351,7 @@ type TriggerEventData = {
 ```
 By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
-## Part 3 - Particle Systems
+## Part 4 - Particle Systems
 In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
 
 ```typescript
@@ -326,14 +377,14 @@ export default class PlayerWeapon extends ParticleSystem {
 ```
 For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
 
-### Part 3.1 - Rotating the particles
+### Part 4.1 - Rotating the particles
 Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
 
 <p align="center">
 <img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
 </p>
 
-### Part 3.2 - Particle Collision Group
+### Part 4.2 - Particle Collision Group
 In order to get the collision detection working for the player's particle system, you need to set the physics group for each particle in the particle system. You can set the physics group of a GameNode using the `Physical.setGroup(group: string)` method. 
 
 ## Part 4 - Tweening
