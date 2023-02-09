@@ -31,7 +31,7 @@ The platformer for this homework assignment was loosely inspired by Kevin's game
 
 You should notice the attack button launches a burst of particles to the right of the player's sprite. There are no enemies in the game trying to kill you, but there is fall damage. The player's health is indicated by the healthbar in the top-right corner. The goal of the game is to make it to the level-end area, indicated by the purple box, without dying.
 
-> Great game ideas like this is why I lean more towards game *programming* than *design* 😄
+> Great game ideas like this is why I lean more towards game programming than design 😄
 
 ## Codebase Files
 The directory structure of the homework codebase looks similar to the tree diagram shown below.
@@ -214,7 +214,7 @@ addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean
 ```
 
 ## Part 2.2 - Creating Physics Groups and Triggers
-For this homework assignment, you'll have to configure the physics groups and collision map for the scene. There are five collision groups that need to be accounted for:
+For this homework assignment, you'll have to configure the physics groups and collision map for the scene. There are four collision groups that need to be accounted for:
 1. Ground: the group for thhe indestructible layer of the tilemap
 2. Player: the group for the player
 3. Weapon: the group for the particles in the player's weapon system
@@ -298,6 +298,7 @@ type TriggerEventData = {
   
 }
 ```
+By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
 ## Part 3 - Particle Systems
 In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
@@ -323,17 +324,10 @@ export default class PlayerWeapon extends ParticleSystem {
 
 }
 ```
-For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. 
-> Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
+For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
 
 ### Part 3.1 - Rotating the particles
-Currently, the particle effect triggered by the player's attack always fires to the right, similar to the image shown below.
-
-<p align="center">
-<img width="696" alt="Screen Shot 2023-02-08 at 12 06 13 AM" src="https://user-images.githubusercontent.com/63989572/217439115-ff5e8761-139c-4cbc-b6ba-2037025a5b33.png">
-</p>
-
-You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should not follow the mouse around the screen.
+Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
 
 <p align="center">
 <img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
@@ -347,12 +341,55 @@ In order to get the collision detection working for the player's particle system
 ### Part 4.1 - Do a Flip
 Add a tween to your player's sprite to make them do a flip. Which property(s) you need to tween 
 
-## Part 5 - Playing Sound
-Firing events to the audio manager in Wolfie2d. Start, stop, playing sounds on a loop for music.
-
 ## Part 6 - Resource Management
-In this homework assignment, there are two levels (Level1 and Level2) and in each level, we have to load in different sets of resources (sprites, tilemaps, audio files, etc.). However some of those resources are the same. It's up to you to decide which resources to keep in the ResourceManager for the next scene, and which resources cull.
+For this assignment, you need to decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
 
-Loading and unloading resources should be done in the `loadScene()` and `unloadScene()` methods of the `Scene` class. In addition, every scene has a reference to the ResourceManager called `load` that you can use to get access to the ResourceManager. You'll have to use tell the ResourceManager what resources from your Scene you want to carry over to the next scene.
+In this assignment there are two levels (Level1 and Level2). At the start of each level, we tell the ResourceManager what assets to load in before the Scene starts (sprites, tilemaps, audio files, etc.) in the `loadScene()` method. 
+
+```typescript
+class HW3Level1 {
+    /**
+     * Load in our resources for level 1
+     */
+    public loadScene(): void {
+        // Load in the tilemap
+        this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
+        
+        // Load in the player's sprite
+        this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
+        
+        // Audio and music
+        this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
+        this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
+        this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
+    }
+}
+```
+```typescript
+class HW3Level2 {
+    /**
+     * Load in resources for level 2.
+     */
+    public loadScene(): void {
+        // Load in the tilemap
+        this.load.tilemap(this.tilemapKey, Level2.TILEMAP_PATH);
+        
+        // Load in the player's sprite
+        this.load.spritesheet(this.playerSpriteKey, Level2.PLAYER_SPRITE_PATH);
+        
+        // Audio and music
+        this.load.audio(this.levelMusicKey, Level2.LEVEL_MUSIC_PATH);
+        this.load.audio(this.jumpAudioKey, Level2.JUMP_AUDIO_PATH);
+        this.load.audio(this.tileDestroyedAudioKey, Level2.TILE_DESTROYED_PATH);
+    }
+}
+```
+
+When the level ends, the ResourceManager (by default) expunges all of the assets we loaded in for a given scene. In a game where we are reusing the same assets over and over again across muliple scenes, constantly unloading and reloading the assets back in can become expensive. 
+
+You need to tell the ResourceManager not to expunge the resources in Level1 that get used in Level2. You should also make sure not to load in any resources in Level2 that have already been loaded in Level1. 
+
+
+
 
 
