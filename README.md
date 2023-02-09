@@ -21,7 +21,160 @@ In this assignment, you will make a simple platformer game using the Typescript 
 * How to create simple AI using finite state machines
 * Resource management 
 
-## Part 1 - Sound Effects and Level Music
+## How to Play
+The platformer for this homework assignment was loosely inspired by Kevin's game from last semester (DoodleFin) and Terraria. The controls for the game are pretty bare-bones:
+
+- W: Jump
+- A: Move left
+- D: Move right
+- X: Attack (probably going to change this)
+
+You should notice the attack button launches a burst of particles to the right of the player's sprite. There are no enemies in the game trying to kill you, but there is fall damage. The player's health is indicated by the healthbar in the top-right corner. The goal of the game is to make it to the level-end area, indicated by the purple box, without dying.
+
+> Great game ideas like this is why I lean more towards game *programming* than *design* 😄
+
+## Codebase Files
+The directory structure of the homework codebase looks similar to the tree diagram shown below.
+```
+.
+├── README.md
+├── dist
+├── gulpfile.js
+├── package-lock.json
+├── package.json
+├── src
+│   ├── Wolfie2D
+│   ├── hw3
+│   │   ├── Factory
+│   │   │   ├── HW3CanvasNodeFactory.ts
+│   │   │   └── HW3FactoryManager.ts
+│   │   ├── HW3Controls.ts
+│   │   ├── HW3Events.ts
+│   │   ├── HW3PhysicsGroups.ts
+│   │   ├── Nodes
+│   │   │   └── HW3AnimatedSprite.ts
+│   │   ├── Player
+│   │   │   ├── PlayerController.ts
+│   │   │   ├── PlayerStates
+│   │   │   │   ├── Dead.ts
+│   │   │   │   ├── Fall.ts
+│   │   │   │   ├── Idle.ts
+│   │   │   │   ├── Jump.ts
+│   │   │   │   ├── PlayerState.ts
+│   │   │   │   └── Walk.ts
+│   │   │   └── PlayerWeapon.ts
+│   │   └── Scenes
+│   │       ├── HW3Level.ts
+│   │       ├── HW3Level1.ts
+│   │       ├── HW3Level2.ts
+│   │       └── MainMenu.ts
+│   ├── index.d.ts
+│   ├── index.html
+│   └── main.ts
+└── tsconfig.json
+```
+
+## Codebase Structure
+The homework code for this assignment is structured a bit differently than the code in the previous assignment.
+
+### Multiple Levels
+Instead of a single, custom scene class, we've defined an abstact class called `HW3Level` extending the base Scene class with two subclasses; `HW3Level1` and `HW3Level2`. The heirarchy is shown roughly in the diagram below. I have omitted the methods and fields from the diagram for the sake of keeping things simple.
+
+```mermaid
+classDiagram
+  direction LR
+  
+  class HW3Level
+  <<Abstract>> HW3Level
+  
+  Scene <|-- HW3Level
+  
+  HW3Level <|-- HW3Level1
+  HW3Level <|-- HW3Level2
+```
+Most of the heavy lifting is done in the abstract HW3Level class. The subclasses will ultimately have to override and implement some functionality to get things working.
+
+### Player StateMachine
+The controller for the Player has been configured as a simple finite state machine. The player's state machine has a total of five states:
+
+- Idle
+- Walking
+- Jumping
+- Falling
+- Dead
+
+The transitions between the different states have been modelled after the state diagram shown below. You should notice the diagram is a bit messy. StateMachine AI can very quickly become a tangled mess, and in practice, become very difficult to scale. Watch out for this as you're making your games.
+
+```mermaid
+stateDiagram
+    direction LR
+    
+    [*] --> Idle
+    Idle --> Walk
+    Idle --> Jump
+    Idle --> Fall
+    Fall --> Idle
+    Jump --> Idle
+    Jump --> Fall
+    Walk --> Fall
+    Walk --> Idle
+    Walk --> Jump
+    
+    Idle --> Dead
+    Walk --> Dead
+    Fall --> Dead
+    Jump --> Dead
+    
+    Dead --> [*]
+```
+
+## Part 1 - Playing Sound Effects
+For this assignment, you'll have use Wolfie2d's audio system to play your custom sound effects and level music. Interfacing with Wolfie2d's sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
+```typescript
+enum GameEventType {
+
+    /**
+     * Play Sound event. Has data: {key: string, loop: boolean, holdReference: boolean }
+     */
+    PLAY_SOUND = "play_sound",
+
+    /**
+     * Play Sound event. Has data: {key: string}
+     */
+    STOP_SOUND = "stop_sound",
+
+    /**
+     * Play Sound event. Has data: {key: string, loop: boolean, holdReference: boolean, channel: AudioChannelType }
+     */
+    PLAY_SFX = "play_sfx",
+
+    /**
+     * Play Sound event. Has data: {key: string, loop: boolean, holdReference: boolean }
+     */
+    PLAY_MUSIC = "play_music",
+
+    /**
+     * Mute audio channel event. Has data: {channel: AudioChannelType}
+     */
+    MUTE_CHANNEL = "mute_channel",
+
+    /**
+     * Unmute audio channel event. Has data: {channel: AudioChannelType}
+     */
+    UNMUTE_CHANNEL = "unmute_channel"
+    
+}
+```
+For the most part you only have to worry about using the `PLAY_SOUND` and `STOP_SOUND` events.
+
+### Part 1.1 - Playing Sound Effects
+For this assignment, there are a few sound effects that should be played in response to different game events.
+
+- The player entering the `Jump` state, should trigger a jump sound effect
+- A particle colliding with the destructible layer of the tilemap should trigger a sound effect
+
+### Part 1.2 - Level 2 Music
+When the game transitions to the second level, you should notice the music
 
 ## Part 2 - Physics
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
@@ -186,13 +339,20 @@ You need to adapt the particle system, so that the particles are fired in the di
 <img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
 </p>
 
+### Part 3.2 - Particle Collision Group
+In order to get the collision detection working for the player's particle system, you need to set the physics group for each particle in the particle system. You can set the physics group of a GameNode using the `Physical.setGroup(group: string)` method. 
+
 ## Part 4 - Tweening
-Creating and playing tweens in Wolfie2D. Probably the flip and level end slide in animation.
+
+### Part 4.1 - Do a Flip
+Add a tween to your player's sprite to make them do a flip. Which property(s) you need to tween 
 
 ## Part 5 - Playing Sound
 Firing events to the audio manager in Wolfie2d. Start, stop, playing sounds on a loop for music.
 
 ## Part 6 - Resource Management
-Unloading and loading resources into the game (different tilemaps, custom sounds/music, custom sprites)
+In this homework assignment, there are two levels (Level1 and Level2) and in each level, we have to load in different sets of resources (sprites, tilemaps, audio files, etc.). However some of those resources are the same. It's up to you to decide which resources to keep in the ResourceManager for the next scene, and which resources cull.
+
+Loading and unloading resources should be done in the `loadScene()` and `unloadScene()` methods of the `Scene` class. In addition, every scene has a reference to the ResourceManager called `load` that you can use to get access to the ResourceManager. You'll have to use tell the ResourceManager what resources from your Scene you want to carry over to the next scene.
 
 
