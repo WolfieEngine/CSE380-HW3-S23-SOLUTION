@@ -6,14 +6,9 @@ import PlayerState from "./PlayerState";
 
 export default class Jump extends PlayerState {
 
-	public onEnter(options: Record<string, any>): void {
-        let scene = this.owner.getScene()
-        
+	public onEnter(options: Record<string, any>): void {  
         // Give the player a burst of upward momentum
         this.parent.velocity.y = -200;
-
-        // Play the jump sound for the player
-		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: scene.getJumpAudioKey(), loop: false, holdReference: false});
 	}
 
 	public update(deltaT: number): void {
