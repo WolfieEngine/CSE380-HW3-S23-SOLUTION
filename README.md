@@ -227,18 +227,17 @@ export default class PlayerWeapon extends ParticleSystem {
 
 }
 ```
-For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. 
-
-Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
-
-### Rotating the particles
 Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
 
 <p align="center">
 <img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
 </p>
 
+You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
+
 ## Part 4 - Tweening
+Add a tween to your hero's sprite to make them do a flip. The tween should rotate your hero's sprite by 360 degrees. The hero's flip tween should be played when the hero transitions from the `Walk` state to the `Jump` state.
+
 In Wolfie2d, all game nodes expose a `TweenController` property called `tweens` that allows you to add `TweenData` to your game nodes. 
 
 ```typescript
@@ -301,9 +300,6 @@ enum TweenableProperties{
 }
 ```
 
-## Part 4.1 - Do a Flip
-Add a tween to your player's sprite to make them do a flip. The tween should rotate your hero's sprite by 360 degrees. The hero's flip tween should be played when the hero transitions from the `Walk` state to the `Jump` state.
-
 ## Part 5 - Resource Management
 For this assignment, you need to decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
 
@@ -352,7 +348,7 @@ When the level ends, the ResourceManager (by default) expunges all of the assets
 
 You need to tell the ResourceManager not to expunge the resources in Level1 that get used in Level2. You should also make sure not to load in any resources in Level2 that have already been loaded in Level1. 
 
-## Part 3 - Physics
+## Part 6 - Physics
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
 ```typescript
 interface Physical {
@@ -369,7 +365,7 @@ Moving a game node by updating it's position field is the equivalent of "telepor
 
 > A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
 
-## Part 3.1 - Adding Physics to GameNodes
+## Part 6.1 - Adding Physics to GameNodes
 For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
 
 - The player's sprite
@@ -389,7 +385,7 @@ In Wolfie2D, if you want to add a physics component to your game node, you can c
 addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean, isStatic?: boolean): void;
 ```
 
-## Part 3.2 - Creating Physics Groups and Triggers
+## Part 6.2 - Creating Physics Groups and Triggers
 For this homework assignment, you'll have to configure the physics groups and collision map for the scene. In this assignment there are four physics groups that need to be accounted for:
 
 1. Ground: the group for thhe indestructible layer of the tilemap
@@ -453,7 +449,7 @@ The collision map for the four groups should resemble the table shown below:
 | Weapon       | 1      | 0      | 0      | 1            | 
 | Destructible | 0      | 1      | 1      | 0            | 
 
-## Part 3.3 - Assigning Physics Groups and Triggers
+## Part 6.3 - Assigning Physics Groups and Triggers
 For this assignment you'll need to assign different types of game nodes to different collision groups.
 
 * The player should be assigned to the Player physics group
@@ -500,9 +496,15 @@ type TriggerEventData = {
 ```
 By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
-## Part 3.4 - Destroying the Tilemap
-For this assignment, you need to detect and handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed.
+## Part 6.4 - Destroying the Tilemap
+For this assignment, you need to handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed.
 
+In order to get this working, you'll have to work with the methods attached to the `OrthogonalTilemap` class.
+
+1. You can destroy and/or change tiles in a tilemap using the `Tilemap.setTileAtRowCol()` or `Tilemap.setTile()` methods. Each type of tile has a unique index associated with it. The empty or transparent tile has an index of 0.
+
+1. Every game node has a swept-rect field you that gets set by the physics system. 
+2. Tilemaps have a method called `isTileCollidable(col, row)` that checks if the tile at the given (col, row) coordinates is collidable or not.
 
 
 
