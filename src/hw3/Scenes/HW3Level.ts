@@ -385,19 +385,6 @@ export default abstract class HW3Level extends Scene {
         // Give the player physics
         this.player.addPhysics(new AABB(this.player.position.clone(), this.player.boundary.getHalfSize().clone()));
 
-        // Give the player a flip animation
-        this.player.tweens.add(PlayerTweens.FLIP, {
-            startDelay: 0,
-            duration: 500,
-            effects: [
-                {
-                    property: "rotation",
-                    start: 0,
-                    end: 2*Math.PI,
-                    ease: EaseFunctionType.IN_OUT_QUAD
-                }
-            ]
-        });
         // Give the player a death animation
         this.player.tweens.add(PlayerTweens.DEATH, {
             startDelay: 0,
