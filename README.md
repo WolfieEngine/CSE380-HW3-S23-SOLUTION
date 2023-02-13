@@ -203,6 +203,155 @@ When the game transitions to the second level, you should play your custom level
 
 Additionally, you should notice that the level music from level 1 keeps playing when level 2 starts, creating some rather unpleasant level music. Make sure the level music stops playing when we transition between scenes. 
 
+## Part 3 - Particle Systems
+In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
+
+```typescript
+/**
+ * The particle system used for the player's weapon
+ */
+export default class PlayerWeapon extends ParticleSystem {
+
+    /**
+     * @returns true if the particle system is running; false otherwise.
+     */
+    public isSystemRunning(): boolean { return this.systemRunning; }
+
+    /**
+     * Sets the animations for a particle in the player's weapon
+     * @param particle the particle to give the animation to
+     */
+    public setParticleAnimation(particle: Particle) {
+        // Implementation not shown
+    }
+
+}
+```
+For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. 
+
+Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
+
+### Rotating the particles
+Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
+
+<p align="center">
+<img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
+</p>
+
+## Part 4 - Tweening
+In Wolfie2d, all game nodes expose a `TweenController` property called `tweens` that allows you to add `TweenData` to your game nodes. 
+
+```typescript
+class TweenData {
+    
+    /** The amount of time in ms to wait before executing the tween */
+    startDelay: number;
+    /** The duration of time over which the value with change from start to end */
+    duration: number;
+    /** An array of the effects on the properties of the object */
+    effects: Array<TweenEffect>;
+    /** Whether or not this tween should reverse from end to start for each property when it finishes */
+    reverseOnComplete: boolean;
+    /** Whether or not this tween should loop when it completes */
+    loop: boolean;
+    /** The name of the event to send (if any) when the tween finishes playing */
+    onEnd: string
+    
+    // Members for management by the tween manager (don't touch these)
+    
+    /** The progress of this tween through its effects */
+    progress: number;
+    /** The amount of time in ms that has passed from when this tween started running */
+    elapsedTime: number;
+    /** The state of this tween */
+    animationState: AnimationState;
+    /** Whether or not this tween is currently reversing */
+    reversing: boolean;
+}
+```
+
+Every tween has a set of effects associated with it. 
+
+```typescript
+class TweenEffect {
+    /** The property to tween */
+    property: TweenableProperties;
+    /** Whether or not the Tween should reset the property to its original value after playing */
+    resetOnComplete: boolean;
+    /** The starting value for the tween */
+    start: any;
+    /** The ending value for the tween */
+    end: any;
+    /** The ease function to use */
+    ease: EaseFunctionType;
+    
+    /** DO NOT MODIFY - The original value of the property - set automatically */
+    initialValue: number;
+}
+```
+The properties you can configure tweens for are listed in the `TweenableProperties` enum in the `GameNode.ts` are shown below.
+```typescript
+enum TweenableProperties{
+	posX = "positionX",
+	posY = "positionY",
+	scaleX = "scaleX",
+	scaleY = "scaleY",
+	rotation = "rotation",
+	alpha = "alpha"
+}
+```
+
+## Part 4.1 - Do a Flip
+Add a tween to your player's sprite to make them do a flip. The tween should rotate your hero's sprite by 360 degrees. The hero's flip tween should be played when the hero transitions from the `Walk` state to the `Jump` state.
+
+## Part 5 - Resource Management
+For this assignment, you need to decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
+
+In this assignment there are two levels (Level1 and Level2). At the start of each level, we tell the ResourceManager what assets to load in before the Scene starts (sprites, tilemaps, audio files, etc.) in the `loadScene()` method. 
+
+```typescript
+class HW3Level1 {
+    /**
+     * Load in our resources for level 1
+     */
+    public loadScene(): void {
+        // Load in the tilemap
+        this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
+        
+        // Load in the player's sprite
+        this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
+        
+        // Audio and music
+        this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
+        this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
+        this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
+    }
+}
+```
+```typescript
+class HW3Level2 {
+    /**
+     * Load in resources for level 2.
+     */
+    public loadScene(): void {
+        // Load in the tilemap
+        this.load.tilemap(this.tilemapKey, Level2.TILEMAP_PATH);
+        
+        // Load in the player's sprite
+        this.load.spritesheet(this.playerSpriteKey, Level2.PLAYER_SPRITE_PATH);
+        
+        // Audio and music
+        this.load.audio(this.levelMusicKey, Level2.LEVEL_MUSIC_PATH);
+        this.load.audio(this.jumpAudioKey, Level2.JUMP_AUDIO_PATH);
+        this.load.audio(this.tileDestroyedAudioKey, Level2.TILE_DESTROYED_PATH);
+    }
+}
+```
+
+When the level ends, the ResourceManager (by default) expunges all of the assets we loaded in for a given scene. In a game where we are reusing the same assets over and over again across muliple scenes, constantly unloading and reloading the assets back in can become expensive. 
+
+You need to tell the ResourceManager not to expunge the resources in Level1 that get used in Level2. You should also make sure not to load in any resources in Level2 that have already been loaded in Level1. 
+
 ## Part 3 - Physics
 In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
 ```typescript
@@ -299,10 +448,10 @@ The collision map for the four groups should resemble the table shown below:
 
 |              | Ground | Player | Weapon | Destructible |
 |--------------|--------|--------|--------|--------------|
-| Ground       | No     | Yes    | Yes    | No           | 
-| Player       | Yes    | No     | No     | Yes          |
-| Weapon       | Yes    | No     | No     | Yes          | 
-| Destructible | No     | Yes    | Yes    | No           | 
+| Ground       | 0      | 1      | 1      | 0            | 
+| Player       | 1      | 0      | 0      | 1            |
+| Weapon       | 1      | 0      | 0      | 1            | 
+| Destructible | 0      | 1      | 1      | 0            | 
 
 ## Part 3.3 - Assigning Physics Groups and Triggers
 For this assignment you'll need to assign different types of game nodes to different collision groups.
@@ -351,94 +500,9 @@ type TriggerEventData = {
 ```
 By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
-## Part 4 - Particle Systems
-In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
+## Part 3.4 - Destroying the Tilemap
+For this assignment, you need to detect and handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed.
 
-```typescript
-/**
- * The particle system used for the player's weapon
- */
-export default class PlayerWeapon extends ParticleSystem {
-
-    /**
-     * @returns true if the particle system is running; false otherwise.
-     */
-    public isSystemRunning(): boolean { return this.systemRunning; }
-
-    /**
-     * Sets the animations for a particle in the player's weapon
-     * @param particle the particle to give the animation to
-     */
-    public setParticleAnimation(particle: Particle) {
-        // Implementation not shown
-    }
-
-}
-```
-For this part of the assignment, you'll need to adapt the `PlayerWeapon` particle system to support some additional functionality. You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
-
-### Part 4.1 - Rotating the particles
-Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
-
-<p align="center">
-<img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
-</p>
-
-### Part 4.2 - Particle Collision Group
-In order to get the collision detection working for the player's particle system, you need to set the physics group for each particle in the particle system. You can set the physics group of a GameNode using the `Physical.setGroup(group: string)` method. 
-
-## Part 4 - Tweening
-
-### Part 4.1 - Do a Flip
-Add a tween to your player's sprite to make them do a flip. Which property(s) you need to tween 
-
-## Part 6 - Resource Management
-For this assignment, you need to decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
-
-In this assignment there are two levels (Level1 and Level2). At the start of each level, we tell the ResourceManager what assets to load in before the Scene starts (sprites, tilemaps, audio files, etc.) in the `loadScene()` method. 
-
-```typescript
-class HW3Level1 {
-    /**
-     * Load in our resources for level 1
-     */
-    public loadScene(): void {
-        // Load in the tilemap
-        this.load.tilemap(this.tilemapKey, Level1.TILEMAP_PATH);
-        
-        // Load in the player's sprite
-        this.load.spritesheet(this.playerSpriteKey, Level1.PLAYER_SPRITE_PATH);
-        
-        // Audio and music
-        this.load.audio(this.levelMusicKey, Level1.LEVEL_MUSIC_PATH);
-        this.load.audio(this.jumpAudioKey, Level1.JUMP_AUDIO_PATH);
-        this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
-    }
-}
-```
-```typescript
-class HW3Level2 {
-    /**
-     * Load in resources for level 2.
-     */
-    public loadScene(): void {
-        // Load in the tilemap
-        this.load.tilemap(this.tilemapKey, Level2.TILEMAP_PATH);
-        
-        // Load in the player's sprite
-        this.load.spritesheet(this.playerSpriteKey, Level2.PLAYER_SPRITE_PATH);
-        
-        // Audio and music
-        this.load.audio(this.levelMusicKey, Level2.LEVEL_MUSIC_PATH);
-        this.load.audio(this.jumpAudioKey, Level2.JUMP_AUDIO_PATH);
-        this.load.audio(this.tileDestroyedAudioKey, Level2.TILE_DESTROYED_PATH);
-    }
-}
-```
-
-When the level ends, the ResourceManager (by default) expunges all of the assets we loaded in for a given scene. In a game where we are reusing the same assets over and over again across muliple scenes, constantly unloading and reloading the assets back in can become expensive. 
-
-You need to tell the ResourceManager not to expunge the resources in Level1 that get used in Level2. You should also make sure not to load in any resources in Level2 that have already been loaded in Level1. 
 
 
 
