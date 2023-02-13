@@ -112,15 +112,6 @@ export default class PlayerController extends StateMachineAI {
             this.weapon.startSystem(500, 0, this.owner.position);
         }
 
-        /*
-            This if-statement will place a tile wherever the user clicks on the screen. I have
-            left this here to make traversing the map a little easier, incase you accidently
-            destroy everything with the player's weapon.
-        */
-        if (Input.isMousePressed()) {
-            this.tilemap.setTileAtRowCol(this.tilemap.getColRowAt(Input.getGlobalMousePosition()),5);
-        }
-
 	}
 
     public get velocity(): Vec2 { return this._velocity; }
