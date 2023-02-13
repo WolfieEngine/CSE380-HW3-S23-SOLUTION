@@ -17,9 +17,6 @@ export const HW3Events = {
      */
     HEALTH_CHANGE: "HEALTH_CHANGE",
 
-    // The event sent when a particle hits a tile in the destructible tilemap layer
-    PARTICLE_HIT_DESTRUCTIBLE: "PARTICLE_HIT_DESTRUCTIBLE",
-
     // The event sent when the player dies. Gets sent after the player's death animation
     PLAYER_DEAD: "PLAYER_DEAD"
     
