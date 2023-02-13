@@ -120,13 +120,14 @@ export default abstract class HW3Level extends Scene {
         // Initialize the sprite and particle system for the players weapon 
         this.initializeWeaponSystem();
 
+        this.initializeUI();
+        
         // Initialize the player 
         this.initializePlayer(this.playerSpriteKey);
 
         // Initialize the viewport - this must come after the player has been initialized
         this.initializeViewport();
         this.subscribeToEvents();
-        this.initializeUI();
         
 
         // Initialize the ends of the levels - must be initialized after the primary layer has been added

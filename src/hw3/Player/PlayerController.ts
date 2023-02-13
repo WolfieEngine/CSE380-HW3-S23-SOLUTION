@@ -75,8 +75,8 @@ export default class PlayerController extends StateMachineAI {
         this.speed = 400;
         this.velocity = Vec2.ZERO;
 
-        this.health = 10
-        this.maxHealth = 10;
+        this.health = 5
+        this.maxHealth = 5;
 
         // Add the different states the player can be in to the PlayerController 
 		this.addState(PlayerStates.IDLE, new Idle(this, this.owner));
@@ -121,7 +121,11 @@ export default class PlayerController extends StateMachineAI {
     public set speed(speed: number) { this._speed = speed; }
 
     public get maxHealth(): number { return this._maxHealth; }
-    public set maxHealth(maxHealth: number) { this._maxHealth = maxHealth; }
+    public set maxHealth(maxHealth: number) { 
+        this._maxHealth = maxHealth; 
+        // When the health changes, fire an event up to the scene.
+        this.emitter.fireEvent(HW3Events.HEALTH_CHANGE, {curhp: this.health, maxhp: this.maxHealth});
+    }
 
     public get health(): number { return this._health; }
     public set health(health: number) { 
