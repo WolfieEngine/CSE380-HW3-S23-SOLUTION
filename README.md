@@ -503,7 +503,7 @@ For this assignment, you need to handle collisions between the particles emitted
 
 Every tile in a tileset has a unique index associated with it. The tilemap contains an array of tile indicies. By default, there is an empty (transparent) tile associated with every tileset. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle is colliding with in the tilemap to `0`.
 
-How you do this is up to you. There is more than one way to 
+How you do this is up to you. There is more than one way to check whether a particle is colliding with the destructible tilemap layer. Some general advice:
 
 * Take advantage of the existing physics system (collision groups, triggers, and collision detection) to detect when a particle collides with the destructible layer of the tilemap. 
 * You'll have to use some of the methods attached to Wolfie2d's `OrthogonalTilemap` class to set tiles in the destructible tilemap. The methods exposed by the `OrthogonalTilemap` class are shown below.
@@ -562,8 +562,8 @@ How you do this is up to you. There is more than one way to
         isTileCollidable(indexOrCol: number, row?: number): boolean;
     }
 	```
-
-
+## Submission
+Submit a single zip file containing your project's root directory and all files contained within to brightspace. Don't submit the `node_modules`.
 
 
 
