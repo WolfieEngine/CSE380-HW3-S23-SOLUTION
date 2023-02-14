@@ -70,6 +70,13 @@ export default class Level1 extends HW3Level {
         this.load.audio(this.tileDestroyedAudioKey, Level1.TILE_DESTROYED_PATH);
     }
 
+    /**
+     * Unload resources for level 1
+     */
+    public unloadScene(): void {
+        // TODO decide which resources to keep/cull 
+    }
+
     public startScene(): void {
         super.startScene();
         // Set the next level to be Level2
