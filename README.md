@@ -127,6 +127,8 @@ stateDiagram
     Dead --> [*]
 ```
 
+Wolfie2d's state-machine is based on the [State](https://gameprogrammingpatterns.com/state.html) chapter from your textbook, [*Game Programming Patterns*](https://gameprogrammingpatterns.com/). 
+
 ## Part 1 - Animated Sprites
 For this assignment, you'll need to load in the custom hero animated sprite you made for homework 1. To do this, you'll need to change the sprite loaded in via the `loadScene()` method of the Level1 and Level2 scenes.
 
