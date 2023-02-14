@@ -156,8 +156,10 @@ Once you've got your animated sprite loaded in and setup, you'll need to play yo
 - When the hero's health hits zero, your sprite should play it's `DYING` animation if it's not already playing
 - After the hero's death animation has played, your sprite should play it's `DEATH` animation.
 
-## Part 2 - Playing Sound Effects
-In this assignment, you should create a custom jump sound effect for your player/hero sprite and some custom level music for the second level, `HW3Level2`. You'll have to use Wolfie2d's audio system to play these custom sound effects and level music. Interfacing with Wolfie2d's sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
+## Part 2 - Creating and Playing Sound Effects
+In this assignment, you will have to create and play your own sound effect and level music. You may use whatever software you'd like to create your sound effect and level music. Last year, I believe we recommended [Audacity](https://www.audacityteam.org/) and [Chiptone](https://sfbgames.itch.io/chiptone)
+
+In order to play your custom sound effects in Wolfie2d, you will have to interface with Wolfie2d's sound system. Interfacing with the sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
 ```typescript
 enum GameEventType {
 
@@ -195,13 +197,13 @@ enum GameEventType {
 ```
 For the most part you only have to worry about using the `PLAY_SOUND` and `STOP_SOUND` events.
 
-### Part 2.1 - Playing Sound Effects
-For this assignment, you should play your custom jump sound effect when the player enters the `Jump` state. The player's `Jump` state is defined in the `Jump.ts` file and is one of the states in the player controllers state machine.
+## Part 2.1 - Playing Sound Effects
+For this assignment, you should create a custom dying sound effect for your hero. The dying sound effect should be played when your hero starts playing their dying animation. 
 
-### Part 2.2 - Playing Level Music
-When the game transitions to the second level, you should play your custom level music in place of Andrew's :fire: level music. 
+## Part 2.2 - Playing Level Music
+Create some custom level music for the second level (HW3Level2). When the game transitions to the second level, you should play your custom level music in place of Andrew's :fire: level music. 
 
-Additionally, you should notice that the level music from level 1 keeps playing when level 2 starts, creating some rather unpleasant level music. Make sure the level music stops playing when we transition between scenes. 
+Additionally, you should notice the level 1 music does not stop playing after level 1 ends. This will eventually lead to multiple audio channels all blasting the level 1 music at the same time. Make sure the level 1 music stops playing when a level transition occurs. 
 
 ## Part 3 - Particle Systems
 In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
