@@ -18,20 +18,20 @@ In this assignment, you will make a simple platformer game using the Typescript 
   * Add collidable layers to tilemaps
   * Apply collision groups to tilemaps
 * How to play sounds and level music in Wolfie2D
-* How to create simple AI using finite state machines
+* How to create simple AI using finite-state machines
 * Resource management 
 
 ## How to Play
-The platformer for this homework assignment was loosely inspired by Kevin's game from last semester (DoodleFin) and Terraria. The controls for the game are pretty bare-bones:
+The platformer for this homework assignment was inspired by Kevin's game from last semester (DoodleFin) and Terraria. The controls for the game are pretty bare-bones:
 
 - W: Jump
 - A: Move left
 - D: Move right
 - X: Attack (probably going to change this)
 
-You should notice the attack button launches a burst of particles to the right of the player's sprite. There are no enemies in the game trying to kill you, but there is fall damage. The player's health is indicated by the healthbar in the top-right corner. The goal of the game is to make it to the level-end area, indicated by the purple box, without dying.
+You should notice the attack button launches a burst of particles to the right of the player's sprite. There are no enemies in the game trying to kill you, but there is fall damage. The player's health is displayed by the health bar in the top-right corner. The goal is to make it to the level-end area, indicated by the purple box, without dying.
 
-> Great game ideas like this is why I lean more towards game programming than design 😄
+> Great game ideas like this are why I lean more toward game programming than design 😄
 
 ## Codebase Files
 The directory structure of the homework codebase looks similar to the tree diagram shown below.
@@ -77,7 +77,7 @@ The directory structure of the homework codebase looks similar to the tree diagr
 ## Codebase Structure
 
 ### Multiple Levels
-Instead of a single, custom scene class, we've defined an abstact class called `HW3Level` extending the base Scene class with two subclasses; `HW3Level1` and `HW3Level2`. The heirarchy is shown roughly in the diagram below. I have omitted the methods and fields from the diagram for the sake of keeping things simple.
+Instead of a single, custom scene class, we've defined an abstract class called `HW3Level` extending the base Scene class with two subclasses; `HW3Level1` and `HW3Level2`. The hierarchy is shown roughly in the diagram below. I have omitted the methods and fields from the diagram for the sake of keeping things simple.
 
 ```mermaid
 classDiagram
@@ -94,7 +94,7 @@ classDiagram
 Most of the heavy lifting is done in the abstract HW3Level class. The subclasses will ultimately have to override and implement some functionality to get things working.
 
 ### Player StateMachine
-The controller for the Player has been configured as a simple finite state machine. The player's state machine has a total of five states:
+The controller for the player is a simple finite-state machine. The player's state machine has a total of five states:
 
 - Idle
 - Walking
@@ -102,7 +102,7 @@ The controller for the Player has been configured as a simple finite state machi
 - Falling
 - Dead
 
-The transitions between the different states have been modelled after the state diagram shown below. You should notice the diagram is a bit messy. StateMachine AI can very quickly become a tangled mess, and in practice, become very difficult to scale. Watch out for this as you're making your games.
+The transitions between the different states have been modeled after the state diagram shown below. The state diagram is a bit messy. StateMachine AI can very quickly become a tangled mess and in practice become very difficult to scale. Watch out for this as you're making your games.
 
 ```mermaid
 stateDiagram
@@ -127,11 +127,12 @@ stateDiagram
     Dead --> [*]
 ```
 
+Wolfie2d's state-machine is based on the [State](https://gameprogrammingpatterns.com/state.html) chapter from your textbook, [*Game Programming Patterns*](https://gameprogrammingpatterns.com/). 
 
 ## Part 1 - Animated Sprites
 For this assignment, you'll need to load in the custom hero animated sprite you made for homework 1. To do this, you'll need to change the sprite loaded in via the `loadScene()` method of the Level1 and Level2 scenes.
 
-I have defined a const object with keys for my heros sprite in the `PlayerController.ts` file. You'll most likely want to change these keys to match up with the animation keys associated with your hero sprites.
+I have defined a const object with keys for my hero's sprite in the `PlayerController.ts` file. You'll most likely want to change these keys to match up with the animation keys associated with your hero sprites.
 
 ```typescript
 /**
@@ -144,20 +145,22 @@ export const PlayerAnimations = {
 } as const
 ```
 
-Once you've got your animated sprite loaded in and setup, you'll need to play your sprites animations appropriately. 
+Once your hero animated sprite is loaded in and set up, you'll need to play your sprite's animations appropriately. 
 
-- While the hero is not moving (idling), your sprite should play it's `IDLE` animation
-- When the hero takes damage from falling, your sprite should play it's `TAKING_DAMAGE` animation
-- While the hero is moving to the left, your sprite should play it's `RUN_LEFT` animation if it's not already playing
-- While the hero is moving to the right, your sprite should play it's `RUN_RIGHT` animation if it's not already playing
+- While the hero is not moving (idling), your sprite should play its `IDLE` animation
+- When the hero takes damage from falling, your sprite should play its `TAKING_DAMAGE` animation
+- While the hero is moving to the left, your sprite should play its `RUN_LEFT` animation if it's not already playing
+- While the hero is moving to the right, your sprite should play its `RUN_RIGHT` animation if it's not already playing
 - When the hero attacks, the hero should play an attack animation:
-  - If the hero is facing to the right, your sprite should play it's `ATTACKING_RIGHT` animation.
-  - If the hero is facing to the left, your sprite should play it's `ATTACKING_LEFT` animation.
-- When the hero's health hits zero, your sprite should play it's `DYING` animation if it's not already playing
-- After the hero's death animation has played, your sprite should play it's `DEATH` animation.
+  - If the hero is facing to the right, your sprite should play its `ATTACKING_RIGHT` animation.
+  - If the hero is facing to the left, your sprite should play its `ATTACKING_LEFT` animation.
+- When the hero's health hits zero, your sprite should play its `DYING` animation if it's not already playing
+- After the hero's death animation has played, your sprite should play its `DEATH` animation.
 
-## Part 2 - Playing Sound Effects
-In this assignment, you should create a custom jump sound effect for your player/hero sprite and some custom level music for the second level, `HW3Level2`. You'll have to use Wolfie2d's audio system to play these custom sound effects and level music. Interfacing with Wolfie2d's sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
+## Part 2 - Creating and Playing Sound Effects
+In this assignment, you will have to create and play your sound effect and level music. You may use whatever software you'd like to create your sound effect and level music. Last year, I believe we recommended [Audacity](https://www.audacityteam.org/) and [Chiptone](https://sfbgames.itch.io/chiptone)
+
+To play your custom sound effects in Wolfie2d, you must interface with Wolfie2d's sound system. Interfacing with the sound system can be done via the EventQueue. The types of events and the data associated with them are shown below.
 ```typescript
 enum GameEventType {
 
@@ -195,16 +198,16 @@ enum GameEventType {
 ```
 For the most part you only have to worry about using the `PLAY_SOUND` and `STOP_SOUND` events.
 
-### Part 2.1 - Playing Sound Effects
-For this assignment, you should play your custom jump sound effect when the player enters the `Jump` state. The player's `Jump` state is defined in the `Jump.ts` file and is one of the states in the player controllers state machine.
+## Part 2.1 - Playing Sound Effects
+In this assignment, you should create a custom dying sound effect for your hero. The dying sound should play when your hero starts playing their dying animation. 
 
-### Part 2.2 - Playing Level Music
-When the game transitions to the second level, you should play your custom level music in place of Andrew's :fire: level music. 
+## Part 2.2 - Playing Level Music
+Create some custom-level music for the second level (HW3Level2). When the game transitions to the second level, your custom-level music should start playing.
 
-Additionally, you should notice that the level music from level 1 keeps playing when level 2 starts, creating some rather unpleasant level music. Make sure the level music stops playing when we transition between scenes. 
+Additionally, you should notice that level 1 music does not stop playing after level 1 ends. This will eventually lead to multiple audio channels all blasting the level 1 music at the same time. Make sure the level 1 music stops playing when a level transition occurs. 
 
 ## Part 3 - Particle Systems
-In this homework assignment, you will have to work with an extension of Wolfie2Ds particle system. The particle system used in this assignment is located in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
+In this homework assignment, you will have to work with an extension of Wolfie2D's particle system. The particle system used in this assignment is in the `PlayerWeapon.ts` file. The `PlayerWeapon` extends the base `ParticeSystem` class and looks similar to the code shown below.
 
 ```typescript
 /**
@@ -227,16 +230,16 @@ export default class PlayerWeapon extends ParticleSystem {
 
 }
 ```
-Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system, so that the particles are fired in the direction of the position the mouse was at when the attack button was pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
+Currently, the particle effect triggered by the player's attack always fires to the right. You need to adapt the particle system so that the particles get fired in the direction of the mouse's position on the screen in the frame when the attack button gets pressed (similar to the image shown below). The particles should **NOT** follow the mouse around the screen.
 
 <p align="center">
 <img width="622" alt="Screen Shot 2023-02-08 at 12 01 31 AM" src="https://user-images.githubusercontent.com/63989572/217438081-30f156bb-55e5-4af5-b6b3-71e43f2a54ac.png">
 </p>
 
-You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionaility to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could possibly override and/or expose from the base ParticleSystem class.
+You may add any additional fields and methods you need to the `PlayerWeapon` class to get things working. Before you go adding functionality to the custom PlayerWeapon particle system, I recommend seeing what fields and/or methods you could override and/or expose from the base ParticleSystem class.
 
 ## Part 4 - Tweening
-Add a tween to your hero's sprite to make them do a flip. The tween should rotate your hero's sprite by 360 degrees. The hero's flip tween should be played when the hero transitions from the `Walk` state to the `Jump` state.
+Add a tween to your hero's sprite to make them do a flip. The tween should rotate your hero's sprite by 360 degrees. The hero's flip tween should play when the hero transitions from the `Walk` state to the `Jump` state.
 
 In Wolfie2d, all game nodes expose a `TweenController` property called `tweens` that allows you to add `TweenData` to your game nodes. 
 
@@ -301,9 +304,9 @@ enum TweenableProperties{
 ```
 
 ## Part 5 - Resource Management
-For this assignment, you need to decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
+For this assignment, you must decide which resources to keep in the ResourceManager for the next scene and which resources to cull.
 
-In this assignment there are two levels (Level1 and Level2). At the start of each level, we tell the ResourceManager what assets to load in before the Scene starts (sprites, tilemaps, audio files, etc.) in the `loadScene()` method. 
+In this assignment, there are two levels (Level1 and Level2). At the start of each level, we tell the ResourceManager what assets to load before the scene starts (sprites, tilemaps, audio files, etc.) in the `loadScene()` method. 
 
 ```typescript
 class HW3Level1 {
@@ -344,12 +347,12 @@ class HW3Level2 {
 }
 ```
 
-When the level ends, the ResourceManager (by default) expunges all of the assets we loaded in for a given scene. In a game where we are reusing the same assets over and over again across muliple scenes, constantly unloading and reloading the assets back in can become expensive. 
+When the level ends, the ResourceManager (by default) expunges all of the assets we loaded in for a given scene. In a game where we are reusing the same assets across multiple scenes, constantly unloading and reloading the assets back in can become expensive. 
 
-You need to tell the ResourceManager not to expunge the resources in Level1 that get used in Level2. You should also make sure not to load in any resources in Level2 that have already been loaded in Level1. 
+You must tell the ResourceManager not to cull the resources in Level1 that get used in Level2. Be sure not to load in any resources in Level2 that were previously loaded in Level1. 
 
 ## Part 6 - Physics
-In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using the Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
+In the first homework assignment, all of the physics, movement, and collision detection was done manually in the custom scene class. For this assignment, we'll be adding a physics component to all of our game nodes and using Wolfie2D's physics system to move our game nodes. If you want to move a game node using Wolfie2D's physics system, you have to use the `Physical.move()` method on the game node.
 ```typescript
 interface Physical {
     /**
@@ -361,12 +364,12 @@ interface Physical {
 ```
 A word of caution; Calling the `move()` method and updating the position field of a game node are **NOT** the same thing :scream: 
 
-Moving a game node by updating it's position field is the equivalent of "teleporting" that game node, whereas calling the the `move()` method is how you actually "move" the node. If your game is using physics, you should be calling the move method.
+Moving a game node by updating its position field is the equivalent of "teleporting" that game node, whereas calling the `move()` method is how you actually "move" the node. If your game uses physics, you should be calling the move method.
 
-> A lot of the methods and functionality you'll have to use to complete this assignment are defined in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
+> Many of the methods and functionality you'll have to use to complete this assignment have definitions in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
 
 ## Part 6.1 - Adding Physics to GameNodes
-For this assignment, you'll need to make sure all of your nodes have physical components and are registered with the physics system. This includes:
+For this assignment, you need to make sure all of the game nodes have physical components registered with the physics system. This includes:
 
 - The player's sprite
 - All of the particles in the player's weapon particle system
@@ -386,14 +389,14 @@ addPhysics(collisionShape?: Shape, colliderOffset?: Vec2, isCollidable?: boolean
 ```
 
 ## Part 6.2 - Creating Physics Groups and Triggers
-For this homework assignment, you'll have to configure the physics groups and collision map for the scene. In this assignment there are four physics groups that need to be accounted for:
+For this homework assignment, you'll have to configure the physics groups and collision map for the scene. In this assignment four physics groups need to be accounted for:
 
-1. Ground: the group for thhe indestructible layer of the tilemap
+1. Ground: the group for the indestructible layer of the tilemap
 2. Player: the group for the player
 3. Weapon: the group for the particles in the player's weapon system
-4. Destructible: the group for destructible layer of the tilemap
+4. Destructible: the group for the destructible layer of the tilemap
 
-The four collision groups are defined in the `HW3PhysicsGroups.ts` file shown below:
+The four collision groups have definitions in the `HW3PhysicsGroups.ts` file shown below:
 
 ```typescript
 /**
@@ -413,7 +416,7 @@ export const HW3PhysicsGroups = {
 } as const;
 ```
 
-Currently, the way you have to configure physics groups and triggers is by passing in physics groups is through the scene options that get passed to the scene constructor. 
+Currently, the way you have to initialize the physics groups is by passing a physics object through the scene options that get passed to the scene constructor. 
 ```typescript
 // Here's a constructor for a custom scene class extending the base scene class
 public constructor(viewport: Viewport, sceneManager: SceneManager, renderingManager: RenderingManager, options: Record<string, any>) {
@@ -435,7 +438,7 @@ type PhysicOptions = {
   
 }
 ```
-Each group in `groupNames` will get a row/column in the collision map. The collisions array is a bitmap (an array of 0s and 1s).
+Each group in `groupNames` will get a row/column in the collision map. The collision array is a bitmap (an array of 0s and 1s).
 
 - A 0 indicates that the two groups should not collide with each other
 - A 1 indicates that the two groups should collide with each other
@@ -450,7 +453,7 @@ The collision map for the four groups should resemble the table shown below:
 | Destructible | 0      | 1      | 1      | 0            | 
 
 ## Part 6.3 - Assigning Physics Groups and Triggers
-For this assignment you'll need to assign different types of game nodes to different collision groups.
+For this assignment, you'll need to assign different types of game nodes to different collision groups.
 
 * The player should be assigned to the Player physics group
 * All particles in the particle pool for the player's particle weapon should be assigned to the Weapon physics group
@@ -466,8 +469,7 @@ interface Physical {
     setGroup(group: string): void;
 }
 ```
-
-In addition, you'll most likely want to set events to be fired when collisions occur between the objects in the different physics groups. You can assign collision triggers to nodes using the `Physical.setTrigger()` method. 
+In addition, you'll most likely want to set events to fire when collisions occur between the objects in the different physics groups. You can assign collision triggers to nodes using the `Physical.setTrigger()` method. 
 
 ```typescript 
 interface Physical {
@@ -481,7 +483,7 @@ interface Physical {
 }
 ```
 
-When the physics system detects a collision between a game node and one of it's trigger groups, an event will be fired to the EventQueue with the name of the event passed to the `onEnter` field of the `setTrigger()` method and the following data:
+When the physics system detects a collision between a game node and one of its trigger groups, an event will fire to the EventQueue with the name of the event passed to the `onEnter` field of the `setTrigger()` method and the following data:
 
 ```typescript
 type TriggerEventData = {
