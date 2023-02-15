@@ -215,6 +215,15 @@ export default abstract class HW3Level extends Scene {
         }
     }
 
+    /**
+     * Checks if a particle hit the tile at the (col, row) coordinates in the tilemap.
+     * 
+     * @param tilemap the tilemap
+     * @param particle the particle
+     * @param col the column the 
+     * @param row the row 
+     * @returns true of the particle hit the tile; false otherwise
+     */
     protected particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number): boolean {
         // TODO detect whether a particle hit a tile
         return;
