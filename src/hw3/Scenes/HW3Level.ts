@@ -208,10 +208,7 @@ export default abstract class HW3Level extends Scene {
                 for(let row = minIndex.y; row <= maxIndex.y; row++){
                     // If the tile is collideable -> check if this particle is colliding with the tile
                     if(tilemap.isTileCollidable(col, row) && this.particleHitTile(tilemap, particle, col, row)){
-                        // We had a collision - delete the tile in the tilemap
-                        tilemap.setTileAtRowCol(new Vec2(col, row), 0);
-                        // Play a sound when we destroy the tile
-                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.tileDestroyedAudioKey, loop: false, holdReference: false });
+                        // TODO play the destroyed sound effect and destroy the tile
                     }
                 }
             }
@@ -219,13 +216,8 @@ export default abstract class HW3Level extends Scene {
     }
 
     protected particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number): boolean {
-        let tileSize = tilemap.getTileSize();
-        // Get the position of this tile
-        let tilePos = new Vec2(col * tileSize.x + tileSize.x/2, row * tileSize.y + tileSize.y/2);
-        // Create a new collider for this tile
-        let collider = new AABB(tilePos, tileSize.scaled(1/2));
-        // Calculate collision area between the node and the tile
-        return particle.sweptRect.overlapArea(collider) > 0;
+        // TODO detect whether a particle hit a tile
+        return;
     }
 
     /**
