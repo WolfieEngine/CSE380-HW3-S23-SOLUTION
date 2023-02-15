@@ -167,6 +167,10 @@ export default abstract class HW3Level extends Scene {
                 this.sceneManager.changeToScene(this.nextLevel);
                 break;
             }
+            case HW3Events.PARTICLE_HIT_DESTRUCTIBLE: {
+                this.handleParticleHit(event.data.get("node"));
+                break;
+            }
             case HW3Events.HEALTH_CHANGE: {
                 this.handleHealthChange(event.data.get("curhp"), event.data.get("maxhp"));
                 break;
@@ -299,6 +303,7 @@ export default abstract class HW3Level extends Scene {
         this.receiver.subscribe(HW3Events.LEVEL_END);
         this.receiver.subscribe(HW3Events.HEALTH_CHANGE);
         this.receiver.subscribe(HW3Events.PLAYER_DEAD);
+        this.receiver.subscribe(HW3Events.PARTICLE_HIT_DESTRUCTIBLE);
     }
     /**
      * Adds in any necessary UI to the game
