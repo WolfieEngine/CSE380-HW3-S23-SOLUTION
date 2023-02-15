@@ -13,6 +13,10 @@ import RandUtils from "../../Wolfie2D/Utils/RandUtils";
  */
 export default class PlayerWeapon extends ParticleSystem {
 
+    public getPool(): Readonly<Array<Particle>> {
+        return this.particlePool;
+    }
+
     /**
      * @returns true if the particle system is running; false otherwise.
      */
