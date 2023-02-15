@@ -499,15 +499,71 @@ type TriggerEventData = {
 By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
 ## Part 6.4 - Destroying the Tilemap
-For this assignment, you need to handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed.
+For this assignment, you need to handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed. 
 
-In order to get this working, you'll have to work with the methods attached to the `OrthogonalTilemap` class.
+Every tile in a tileset has a unique index associated with it. The tilemap contains an array of tile indicies. By default, there is an empty (transparent) tile associated with every tileset. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle is colliding with in the tilemap to `0`.
 
-1. You can destroy and/or change tiles in a tilemap using the `Tilemap.setTileAtRowCol()` or `Tilemap.setTile()` methods. Each type of tile has a unique index associated with it. The empty or transparent tile has an index of 0.
+How you do this is up to you. There is more than one way to check whether a particle is colliding with the destructible tilemap layer. Some general advice:
 
-1. Every game node has a swept-rect field you that gets set by the physics system. 
-2. Tilemaps have a method called `isTileCollidable(col, row)` that checks if the tile at the given (col, row) coordinates is collidable or not.
+* Take advantage of the existing physics system (collision groups, triggers, and collision detection) to detect when a particle collides with the destructible layer of the tilemap. 
+* You'll have to use some of the methods attached to Wolfie2d's `OrthogonalTilemap` class to set tiles in the destructible tilemap. The methods exposed by the `OrthogonalTilemap` class are shown below.
+	```typescript
+    class OrthogonalTilemap {
+        /**
+         * Gets the dimensions of the tilemap
+         * @returns A Vec2 containing the number of columns and the number of rows in the tilemap.
+         */
+        getDimensions(): Vec2;
 
+        /**
+         * Gets the data value of the tile at the specified world position
+         * @param worldCoords The coordinates in world space
+         * @returns The data value of the tile
+         */
+        getTileAtWorldPosition(worldCoords: Vec2): number;
+
+        /**
+         * Get the tile at the specified row and column
+         * @param rowCol The coordinates in tilemap space
+         * @returns The data value of the tile
+         */
+        getTileAtRowCol(rowCol: Vec2): number;
+
+        /**
+         * Gets the world position of the tile at the specified index
+         * @param index The index of the tile
+         * @returns A Vec2 containing the world position of the tile
+         */
+        getTileWorldPosition(index: number): Vec2;
+
+        /**
+         * Gets the data value of the tile at the specified index
+         * @param index The index of the tile
+         * @returns The data value of the tile
+         */
+        getTile(index: number): number;
+
+        // @override
+        setTile(index: number, type: number): void;
+
+        /**
+         * Sets the tile at the specified row and column
+         * @param rowCol The position of the tile in tilemap space
+         * @param type The new data value of the tile
+         */
+        setTileAtRowCol(rowCol: Vec2, type: number): void;
+
+        /**
+         * Returns true if the tile at the specified row and column of the tilemap is collidable
+         * @param indexOrCol The index of the tile or the column it is in
+         * @param row The row the tile is in
+         * @returns A flag representing whether or not the tile is collidable.
+         */
+        isTileCollidable(indexOrCol: number, row?: number): boolean;
+    }
+	```
+## Submission
+Submit a single zip file containing your project's root directory and all files contained within to brightspace. Don't submit the `node_modules`.
 
 
 

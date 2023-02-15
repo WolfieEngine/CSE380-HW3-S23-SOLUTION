@@ -24,6 +24,7 @@ import { HW3Events } from "../HW3Events";
 import { HW3PhysicsGroups } from "../HW3PhysicsGroups";
 import HW3FactoryManager from "../Factory/HW3FactoryManager";
 import MainMenu from "./MainMenu";
+import Particle from "../../Wolfie2D/Nodes/Graphics/Particle";
 
 /**
  * A const object for the layer names
@@ -182,6 +183,50 @@ export default abstract class HW3Level extends Scene {
     }
 
     /* Handlers for the different events the scene is subscribed to */
+
+    /**
+     * Handle particle hit events
+     * @param particleId the id of the particle
+     */
+    protected handleParticleHit(particleId: number): void {
+        let particles = this.playerWeaponSystem.getPool();
+
+        let particle = particles.find(particle => particle.id === particleId);
+        if (particle !== undefined) {
+            // Get the destructable tilemap
+            let tilemap = this.destructable;
+
+            let min = new Vec2(particle.sweptRect.left, particle.sweptRect.top);
+            let max = new Vec2(particle.sweptRect.right, particle.sweptRect.bottom);
+
+            // Convert the min/max x/y to the min and max row/col in the tilemap array
+            let minIndex = tilemap.getColRowAt(min);
+            let maxIndex = tilemap.getColRowAt(max);
+
+            // Loop over all possible tiles the particle could be colliding with 
+            for(let col = minIndex.x; col <= maxIndex.x; col++){
+                for(let row = minIndex.y; row <= maxIndex.y; row++){
+                    // If the tile is collideable -> check if this particle is colliding with the tile
+                    if(tilemap.isTileCollidable(col, row) && this.particleHitTile(tilemap, particle, col, row)){
+                        // We had a collision - delete the tile in the tilemap
+                        tilemap.setTileAtRowCol(new Vec2(col, row), 0);
+                        // Play a sound when we destroy the tile
+                        this.emitter.fireEvent(GameEventType.PLAY_SOUND, { key: this.tileDestroyedAudioKey, loop: false, holdReference: false });
+                    }
+                }
+            }
+        }
+    }
+
+    protected particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number): boolean {
+        let tileSize = tilemap.getTileSize();
+        // Get the position of this tile
+        let tilePos = new Vec2(col * tileSize.x + tileSize.x/2, row * tileSize.y + tileSize.y/2);
+        // Create a new collider for this tile
+        let collider = new AABB(tilePos, tileSize.scaled(1/2));
+        // Calculate collision area between the node and the tile
+        return particle.sweptRect.overlapArea(collider) > 0;
+    }
 
     /**
      * Handle the event when the player enters the level end area.
