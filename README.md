@@ -362,11 +362,11 @@ interface Physical {
     move(velocity: Vec2): void;
 }
 ```
-A word of caution; Calling the `move()` method and updating the position field of a game node are **NOT** the same thing :scream: 
+A word of caution; Calling the `move()` method and updating the position field of a game node are **NOT** the same thing
 
 Moving a game node by updating its position field is the equivalent of "teleporting" that game node, whereas calling the `move()` method is how you actually "move" the node. If your game uses physics, you should be calling the move method.
 
-> Many of the methods and functionality you'll have to use to complete this assignment have definitions in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface :wink:
+> Many of the methods and functionality you'll have to use to complete this assignment have definitions in Wolfie2Ds `Physical` interface. I recommend taking a look at the methods and documentation in that interface
 
 ## Part 6.1 - Adding Physics to GameNodes
 For this assignment, you need to make sure all of the game nodes have physical components registered with the physics system. This includes:
@@ -499,69 +499,34 @@ type TriggerEventData = {
 By default, all GameNodes are assigned to the default physics group (-1) and will collide with everything. If you start to set collision groups for the different nodes before configuring the collision map, you should notice objects will start to pass through each other. 
 
 ## Part 6.4 - Destroying the Tilemap
-For this assignment, you need to handle collisions between the particles emitted from the player's attack particle system and the destructible layer of the tilemap. When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed. 
+Inside the HW3Level class, there are two methods used to catch and handle particle collisions with the destructible layer of the tilemap.
 
-Every tile in a tileset has a unique index associated with it. The tilemap contains an array of tile indicies. By default, there is an empty (transparent) tile associated with every tileset. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle is colliding with in the tilemap to `0`.
+```typescript
+    /**
+     * Handle particle hit events
+     * @param particleId the id of the particle
+     */
+    protected handleParticleHit(particleId: number): void;
+```
+```typescript
+    /**
+     * Checks if a particle hit the tile at the (col, row) coordinates in the tilemap.
+     * @param tilemap the tilemap
+     * @param particle the particle
+     * @param col the column the 
+     * @param row the row 
+     * @returns true of the particle hit the tile; false otherwise
+     */
+    protected particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number): boolean;
+```
 
-How you do this is up to you. There is more than one way to check whether a particle is colliding with the destructible tilemap layer. Some general advice:
+You must implement the method `particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number)` and add some functionality to the `handleParticleHit(particleId: number)` method. 
 
-* Take advantage of the existing physics system (collision groups, triggers, and collision detection) to detect when a particle collides with the destructible layer of the tilemap. 
-* You'll have to use some of the methods attached to Wolfie2d's `OrthogonalTilemap` class to set tiles in the destructible tilemap. The methods exposed by the `OrthogonalTilemap` class are shown below.
-	```typescript
-    class OrthogonalTilemap {
-        /**
-         * Gets the dimensions of the tilemap
-         * @returns A Vec2 containing the number of columns and the number of rows in the tilemap.
-         */
-        getDimensions(): Vec2;
+- The `handleParticleHit(particleId: number)` checks all the tiles a particle might be colliding with and, if the particle is colliding with a tile, the method destroys the tile by setting the index of the tile in the destructible layer's tilemap to `0`
+- The method `particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number)` should check if the given particle, `particle` is colliding with the tile at the (col, row) coordinates in the given tilemap.
 
-        /**
-         * Gets the data value of the tile at the specified world position
-         * @param worldCoords The coordinates in world space
-         * @returns The data value of the tile
-         */
-        getTileAtWorldPosition(worldCoords: Vec2): number;
+When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle is colliding with in the tilemap to `0`. For reference, every tile in a tileset has a unique index associated with it, and the tilemap contains an array of tile indicies. By default, there is an empty (transparent) tile associated with every tileset with an index of `0`.
 
-        /**
-         * Get the tile at the specified row and column
-         * @param rowCol The coordinates in tilemap space
-         * @returns The data value of the tile
-         */
-        getTileAtRowCol(rowCol: Vec2): number;
-
-        /**
-         * Gets the world position of the tile at the specified index
-         * @param index The index of the tile
-         * @returns A Vec2 containing the world position of the tile
-         */
-        getTileWorldPosition(index: number): Vec2;
-
-        /**
-         * Gets the data value of the tile at the specified index
-         * @param index The index of the tile
-         * @returns The data value of the tile
-         */
-        getTile(index: number): number;
-
-        // @override
-        setTile(index: number, type: number): void;
-
-        /**
-         * Sets the tile at the specified row and column
-         * @param rowCol The position of the tile in tilemap space
-         * @param type The new data value of the tile
-         */
-        setTileAtRowCol(rowCol: Vec2, type: number): void;
-
-        /**
-         * Returns true if the tile at the specified row and column of the tilemap is collidable
-         * @param indexOrCol The index of the tile or the column it is in
-         * @param row The row the tile is in
-         * @returns A flag representing whether or not the tile is collidable.
-         */
-        isTileCollidable(indexOrCol: number, row?: number): boolean;
-    }
-	```
 ## Submission
 Submit a single zip file containing your project's root directory and all files contained within to brightspace. Don't submit the `node_modules`.
 
