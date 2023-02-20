@@ -525,7 +525,7 @@ You must implement the method `particleHitTile(tilemap: OrthogonalTilemap, parti
 - The `handleParticleHit(particleId: number)` checks all the tiles a particle might be colliding with and, if the particle is colliding with a tile, the method destroys the tile by setting the index of the tile in the destructible layer's tilemap to `0`
 - The method `particleHitTile(tilemap: OrthogonalTilemap, particle: Particle, col: number, row: number)` should check if the given particle, `particle` is colliding with the tile at the (col, row) coordinates in the given tilemap.
 
-When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile should be destroyed. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle is colliding with in the tilemap to `0`. For reference, every tile in a tileset has a unique index associated with it, and the tilemap contains an array of tile indicies. By default, there is an empty (transparent) tile associated with every tileset with an index of `0`.
+When a particle from the player's attack particle system collides with a tile in the destructible layer of the tilemap, the tile is destroyed. For our purposes, "destroying" a tile will be equivalent to setting the tile a particle collides within the tilemap to `0`. For reference, every tile in a tileset has a unique index associated with it, and the tilemap contains an array of tile indices. By default, there is an empty (transparent) tile associated with every tileset with an index of `0`.
 
 ## Submission
 Submit a single zip file containing your project's root directory and all files contained within to brightspace. Don't submit the `node_modules`.
