@@ -16,6 +16,8 @@ import MathUtils from "../../Wolfie2D/Utils/MathUtils";
 import { HW3Events } from "../HW3Events";
 import Dead from "./PlayerStates/Dead";
 
+// TODO play your heros animations
+
 /**
  * Animation keys for the player spritesheet
  */

@@ -7,7 +7,8 @@ import RandUtils from "../../Wolfie2D/Utils/RandUtils";
  
 
 /**
- * // TODO
+ * // TODO get the particles to move towards the mouse when the player attacks
+ * 
  * The particle system used for the player's attack. Particles in the particle system should
  * be spawned at the player's position and fired in the direction of the mouse's position.
  */
