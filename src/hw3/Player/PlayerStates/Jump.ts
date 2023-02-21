@@ -11,7 +11,6 @@ export default class Jump extends PlayerState {
         let jumpAudio = this.owner.getScene().getJumpAudioKey();
         // Give the player a burst of upward momentum
         this.parent.velocity.y = -200;
-        console.log("jumping");
         // Play the jump sound for the player
 		this.emitter.fireEvent(GameEventType.PLAY_SOUND, {key: jumpAudio, loop: false, holdReference: false});
 	}

@@ -30,14 +30,14 @@ export default class Idle extends PlayerState {
         // If the player is not on the ground, transition to the falling state
         else if (!this.owner.onGround && this.parent.velocity.y > 0) {
             this.finished(PlayerStates.FALL);
-        } else {
+        } 
+        // Otherwise, do nothing (keep idling)
+        else {
             // Update the vertical velocity of the player
             this.parent.velocity.y += this.gravity*deltaT;
             // Move the player
             this.owner.move(this.parent.velocity.scaled(deltaT));
         }
-
-        // Otherwise, do nothing (keep idling)
 		
 	}
 
