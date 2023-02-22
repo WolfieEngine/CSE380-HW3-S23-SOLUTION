@@ -21,7 +21,7 @@ export default class Idle extends PlayerState {
 
         // If the player is moving along the x-axis, transition to the walking state
 		if (!dir.isZero() && dir.y === 0){
-			this.finished(PlayerStates.WALK);
+			this.finished(PlayerStates.RUN);
 		} 
         // If the player is jumping, transition to the jumping state
         else if (Input.isJustPressed(HW3Controls.JUMP)) {
