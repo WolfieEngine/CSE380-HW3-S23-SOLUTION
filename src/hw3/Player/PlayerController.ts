@@ -5,7 +5,7 @@ import OrthogonalTilemap from "../../Wolfie2D/Nodes/Tilemaps/OrthogonalTilemap";
 import Fall from "./PlayerStates/Fall";
 import Idle from "./PlayerStates/Idle";
 import Jump from "./PlayerStates/Jump";
-import Walk from "./PlayerStates/Walk";
+import Run from "./PlayerStates/Run";
 
 import PlayerWeapon from "./PlayerWeapon";
 import Input from "../../Wolfie2D/Input/Input";
@@ -38,7 +38,7 @@ export const PlayerTweens = {
  */
 export const PlayerStates = {
     IDLE: "IDLE",
-    WALK: "WALK",
+    RUN: "RUN",
 	JUMP: "JUMP",
     FALL: "FALL",
     DEAD: "DEAD",
@@ -80,7 +80,7 @@ export default class PlayerController extends StateMachineAI {
 
         // Add the different states the player can be in to the PlayerController 
 		this.addState(PlayerStates.IDLE, new Idle(this, this.owner));
-		this.addState(PlayerStates.WALK, new Walk(this, this.owner));
+		this.addState(PlayerStates.RUN, new Run(this, this.owner));
         this.addState(PlayerStates.JUMP, new Jump(this, this.owner));
         this.addState(PlayerStates.FALL, new Fall(this, this.owner));
         this.addState(PlayerStates.DEAD, new Dead(this, this.owner));
