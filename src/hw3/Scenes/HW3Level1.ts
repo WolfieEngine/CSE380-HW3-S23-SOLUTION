@@ -73,7 +73,7 @@ export default class Level1 extends HW3Level {
     /**
      * Unload resources for level 1 - decide what to keep
      */
-    public unload(): void {
+    public unloadScene(): void {
         this.load.keepSpritesheet(this.playerSpriteKey);
         this.load.keepAudio(this.levelMusicKey);
         this.load.keepAudio(this.jumpAudioKey);
